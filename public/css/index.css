@@ -1,0 +1,105 @@
+/* General Styling */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Roboto', sans-serif;
+  }
+  
+  /* Header Section */
+  .header-section {
+    background-color: white;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .header-section .nav-link {
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+  
+  /* Hero Section */
+  .hero-section {
+    color: white;
+    background-size: cover;
+    background-position: center;
+  }
+  
+  /* Typography */
+  h1, h2 {
+    font-family: 'Roboto', sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  
+  p {
+    font-size: 1.1rem;
+    line-height: 1.8;
+  }
+  
+  /* Advantages Cards */
+  .advantage-card {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .advantage-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Call to Action */
+  .cta-section {
+    background-color: #004080;
+  }
+  
+  /* Social Media Icons */
+  .social-icons a {
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+  }
+  
+  .social-icons a:hover {
+    color: #ff9900;
+  }
+  
+  /* Footer Styling */
+  .footer {
+    background-color: #343a40; /* Dark background */
+    padding: 20px 0; /* Reduce vertical padding */
+    color: white;
+  }
+  
+  .footer-nav a {
+    color: white;
+    margin: 0 10px;
+    font-size: 1rem;
+    text-decoration: none;
+  }
+  
+  .footer-nav a:hover {
+    text-decoration: underline;
+  }
+  
+  /* Social Media Icons */
+  .social-icons a {
+    font-size: 1.5rem;
+    margin: 0 10px;
+    color: white;
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+  
+  /* Hover Effect for Social Media Icons */
+  .social-icons a:hover {
+    color: #ff9900;
+    transform: scale(1.2);
+  }
+  
+  /* Responsive Footer Adjustments */
+  @media (max-width: 768px) {
+    .footer .text-start, .footer .text-end {
+        text-align: center;
+        margin-bottom: 10px;
+    }
+  }
+  
