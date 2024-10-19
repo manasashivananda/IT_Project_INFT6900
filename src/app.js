@@ -69,45 +69,6 @@ app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
 
-// Route to handle login
-app.post("/login", async (req, res) => {
-  const { contactEmail, password } = req.body;
-
-  // Find user by email
-  const user = await Registration.findOne({ contactEmail: contactEmail });
-  if (!user) {
-    return res.status(400).json({ message: "Invalid email or password." });
-  }
-
-  // Check password against the hashed password
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) {
-    return res.status(400).json({ message: "Invalid email or password." });
-  }
-
-  // Set session variables for the logged-in user
-  req.session.user = {
-    name: user.contactName,
-    email: user.contactEmail,
-    businessName: user.businessName,
-    contactPhone: user.contactPhone,
-  };
-
-  console.log("Session after login:", req.session); // Log session data
-
-  // Send success response back to the frontend
-  res.json({ message: "Login successful!" });
-});
-
-// Middleware to check if user is logged in
-function isAuthenticated(req, res, next) {
-  if (req.session && req.session.user) {
-    return next();
-  } else {
-    res.redirect("/login");
-  }
-}
-
 // Route to handle form submission
 app.post("/register", async (req, res) => {
     try {
@@ -147,6 +108,62 @@ app.post("/register", async (req, res) => {
       res.status(500).json({ message: "Registration failed. Please try again." });
     }
   });
+
+  // Route to handle login
+app.post("/login", async (req, res) => {
+  const { contactEmail, password } = req.body;
+
+  // Find user by email
+  const user = await Registration.findOne({ contactEmail: contactEmail });
+  if (!user) {
+    return res.status(400).json({ message: "Invalid email or password." });
+  }
+
+  // Check password against the hashed password
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) {
+    return res.status(400).json({ message: "Invalid email or password." });
+  }
+
+  // Set session variables for the logged-in user
+  req.session.user = {
+    name: user.contactName,
+    email: user.contactEmail,
+    businessName: user.businessName,
+    contactPhone: user.contactPhone,
+  };
+
+  console.log("Session after login:", req.session); // Log session data
+
+  // Send success response back to the frontend
+  res.json({ message: "Login successful!" });
+});
+
+// Middleware to check if user is logged in
+function isAuthenticated(req, res, next) {
+  if (req.session && req.session.user) {
+    return next();
+  } else {
+    res.redirect("/login");
+  }
+}
+
+  // Route to render the dashboard page
+  app.get("/dashboard", isAuthenticated, (req, res) => {
+    console.log("Session Data:", req.session); // Check if session data exists
+  
+    const user = req.session.user;
+    res.render("dashboard", {
+      title: "Dashboard",
+      user,
+      statistics: {
+        totalRegistrations: 100,
+        pendingInvoices: 5,
+        completedInvoices: 95,
+      },
+    });
+});
+
   // Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
