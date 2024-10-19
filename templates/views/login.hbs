@@ -1,34 +1,64 @@
-<link rel="stylesheet" href="/Css/login.css">
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <link rel="stylesheet" href="/css/login.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <!-- Home Button at the Top Right -->
+    <div class="top-right">
+      <a href="/" class="btn btn-primary home-btn">
+        <i class="fas fa-home"></i> Home
+      </a>
+    </div>
 
-<body>
-     <div>
-<a href="/" class="btn btn-primary mt-3">Home</a>
-        </div>
+    <!-- Login Form -->
     <div class="login-form">
-        <h2>Login</h2>
-        <form id="loginForm" method="POST" action="/login">
-       
-        
-            <!-- Contact Email -->
-            <div class="form-group">
-                <input type="email" id="contactEmail" class="form-control" required placeholder=" " autocomplete="off">
-                <label for="contactEmail">Email <span class="text-danger">*</span></label>
-            </div>
+      <h2><i class="fas fa-sign-in-alt"></i> Login</h2>
+      <form id="loginForm" method="POST" action="/login">
+        <!-- Contact Email -->
+        <div class="form-group">
+          <input
+            type="email"
+            id="contactEmail"
+            class="form-control"
+            required
+            placeholder=" "
+            autocomplete="off"
+          />
+          <label for="contactEmail">Email <span class="text-danger">*</span></label>
+        </div>
 
-            <!-- Password -->
-            <div class="form-group">
-                <input type="password" id="password" class="form-control" required placeholder=" " autocomplete="off">
-                <label for="password">Password <span class="text-danger">*</span></label>
-            </div>
+        <!-- Password -->
+        <div class="form-group">
+          <input
+            type="password"
+            id="password"
+            class="form-control"
+            required
+            placeholder=" "
+            autocomplete="off"
+          />
+          <label for="password">Password <span class="text-danger">*</span></label>
+        </div>
 
-            <div class="error-message" id="errorMessage">Invalid email or password.</div>
+        <!-- Error Message -->
+        <div class="error-message" id="errorMessage">Invalid email or password.</div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="submit-btn">Login</button>
-        </form>
+        <!-- Submit Button -->
+        <button type="submit" class="submit-btn">
+          <i class="fas fa-paper-plane"></i> Login
+        </button>
+      </form>
     </div>
 
     <!-- JavaScript for Form Submission -->
     <script src="/js/login.js"></script>
-    
-</body>
+  </body>
+</html>

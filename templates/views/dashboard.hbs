@@ -5,31 +5,111 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{{title}}</title>
     <link rel="stylesheet" href="/css/style.css" />
-        <link rel="stylesheet" href="/css/dashboard.css" />
+    <link rel="stylesheet" href="/css/dashboard.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
   </head>
   <body>
-    <div class="dashboard-container">
-      <header>
+    <header class="main-header">
+      <div class="user-info">
         <h1>Welcome, {{user.name}}</h1>
         <p>Business Name: {{user.businessName}}</p>
         <p>Email: {{user.email}}</p>
         <p>Contact Phone: {{user.contactPhone}}</p>
-      </header>
-      <section class="statistics">
-        <h2>Statistics</h2>
+      </div>
+      <div class="quick-access">
+        <button id="homeBtn" onclick="location.href='/'">
+          <i class="fas fa-home"></i> Home
+        </button>
+        <button id="generateReportBtn">
+          <i class="fas fa-file-alt"></i> Generate Report
+        </button>
+        <button id="accountBtn">
+          <i class="fas fa-user-circle"></i> Account
+        </button>
+      </div>
+    </header>
+
+    <!-- Search bar -->
+    <div class="search-bar">
+      <input type="text" placeholder="Search invoices..." />
+      <button><i class="fas fa-search"></i> Search</button>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-columns">
+      <!-- Left Column (Recent Activity) -->
+      <div class="recent-activity">
+        <h2><i class="fas fa-clock"></i> Recent Activities</h2>
+        <ul>
+          <li>Invoice #1234 created on 12/10/2024</li>
+          <li>Invoice #1235 sent to XYZ Corp.</li>
+        </ul>
+      </div>
+
+      <!-- Center Column (Statistics) -->
+      <div class="statistics">
+        <h2><i class="fas fa-chart-bar"></i> Statistics</h2>
         <ul>
           <li>Total Registrations: {{statistics.totalRegistrations}}</li>
           <li>Pending Invoices: {{statistics.pendingInvoices}}</li>
           <li>Completed Invoices: {{statistics.completedInvoices}}</li>
         </ul>
-      </section>
-      <section class="actions">
-        <h2>Actions</h2>
-        <button id="refreshStats">Refresh Statistics</button>
-        <button id="createInvoice" onclick="location.href='/invoice'">Create Invoice</button>
-      </section>
+      </div>
+
+      <!-- Right Column (Actions) -->
+      <div class="actions">
+        <h2><i class="fas fa-tasks"></i> Actions</h2>
+        <div class="action-buttons">
+          <button id="refreshStats">
+            <i class="fas fa-sync-alt"></i> Refresh Statistics
+          </button>
+          <button id="createInvoice" onclick="location.href='/invoice'">
+            <i class="fas fa-file-invoice"></i> Create Invoice
+          </button>
+        </div>
+      </div>
     </div>
+
+    <!-- Placeholder for charts -->
+    <div class="charts">
+      <h2><i class="fas fa-chart-line"></i> Performance Analytics</h2>
+      <!-- Insert chart using Chart.js or other library here -->
+      <canvas id="invoiceChart"></canvas>
+    </div>
+
     <script src="/js/dashboard.js"></script>
+    <!-- Include Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+      // Placeholder Chart.js example for invoice data
+      const ctx = document.getElementById('invoiceChart').getContext('2d');
+      const invoiceChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['January', 'February', 'March', 'April', 'May', 'June'],
+          datasets: [
+            {
+              label: 'Invoices created',
+              data: [12, 19, 3, 5, 2, 3],
+              backgroundColor: '#007bff',
+              borderColor: '#007bff',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    </script>
   </body>
 </html>

@@ -2,118 +2,146 @@
 body, html {
   margin: 0;
   padding: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f4f4f4;
+  font-family: 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #5dc1f2, #97dbf5); /* Same background as the login page */
 }
 
-/* Container */
-.dashboard-container {
-  width: 80%;
-  max-width: 1200px;
-  margin: 40px auto;
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  padding: 20px;
+/* Full-width Header with Centered Welcome Section */
+.main-header {
+  background-color: #2f3e46;
+  color: white;
+  padding: 30px;
+  display: flex;
+  justify-content: center; /* Centers the user-info content */
+  align-items: center;
+  position: relative;
 }
 
-/* Header Styles */
-header {
-  background-color: #004d99;
-  color: #ffffff;
-  padding: 20px;
-  border-radius: 8px 8px 0 0;
+.user-info {
   text-align: center;
 }
 
-header h1 {
-  font-size: 28px;
-  margin: 0 0 10px 0;
+/* Quick Access on the Right */
+.quick-access {
+  position: absolute;
+  top: 30px;
+  right: 20px;
 }
 
-header p {
-  font-size: 16px;
-  margin: 0;
+.quick-access button {
+  padding: 10px 15px;
+  margin-left: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
-/* Statistics Section */
-.statistics {
+.quick-access button:hover {
+  background-color: #0056b3;
+}
+
+/* Search Bar */
+.search-bar {
   padding: 20px;
-  background-color: #f0f8ff;
-  border-bottom: 1px solid #e0e0e0;
+  text-align: center;
+  margin: 20px 0;
 }
 
-.statistics h2 {
+.search-bar input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-bar button {
+  padding: 10px 20px;
+  background-color: #2f3e46;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.search-bar button:hover {
+  background-color: #212a30;
+}
+
+/* Dashboard Content */
+.dashboard-columns {
+  display: flex;
+  justify-content: space-between;
+  width: 100%; /* Full width */
+  padding: 20px;
+}
+
+.recent-activity, .statistics, .actions {
+  flex: 1; /* Each column takes equal space */
+  background-color: #ffffff;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 8px;
+}
+
+.recent-activity h2, .statistics h2, .actions h2 {
   font-size: 22px;
-  color: #333;
-  margin-bottom: 15px;
+  color: #2f3e46;
 }
 
-.statistics ul {
-  list-style-type: none;
+.recent-activity ul, .statistics ul {
+  list-style: none;
   padding: 0;
 }
 
-.statistics li {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #333;
-}
-
-/* Actions Section */
-.actions {
-  padding: 20px;
-}
-
-.actions h2 {
-  font-size: 22px;
-  color: #333;
-  margin-bottom: 15px;
+/* Action Buttons */
+.actions .action-buttons {
+  display: flex;
+  flex-direction: column;
 }
 
 .actions button {
-  display: inline-block;
-  padding: 12px 20px;
-  margin: 10px;
-  background-color: #004d99;
-  color: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+  background-color: #007bff;
+  color: white;
   border: none;
-  border-radius: 4px;
-  font-size: 16px;
+  border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 .actions button:hover {
-  background-color: #003366;
+  background-color: #0056b3;
 }
 
-.actions #createInvoice {
-  background-color: #28a745;
+/* Placeholder for Charts */
+.charts {
+  padding: 30px;
+  margin: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
 }
 
-.actions #createInvoice:hover {
-  background-color: #218838;
+.charts h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #2f3e46;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .dashboard-container {
-    width: 90%;
+  .dashboard-columns {
+    flex-direction: column;
   }
 
-  header h1 {
-    font-size: 24px;
+  .recent-activity, .statistics, .actions {
+    width: 100%;
   }
 
-  .statistics h2,
-  .actions h2 {
-    font-size: 20px;
-  }
-
-  .statistics li,
-  .actions button {
-    font-size: 14px;
+  .quick-access {
+    position: static;
+    text-align: center;
+    margin: 20px 0;
   }
 }

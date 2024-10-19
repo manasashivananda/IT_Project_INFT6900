@@ -1,17 +1,46 @@
+/* General Styling */
 body {
   font-family: "Roboto", sans-serif;
-  background-color: #f0f2f5;
+  background: linear-gradient(135deg, #6dd5fa, #ffffff);
   overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Top-Right Home Button */
+.top-right {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.home-btn {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.home-btn:hover {
+  background-color: #0056b3;
 }
 
 /* Login Form Container */
 .login-form {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 40px;
   border-radius: 10px;
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
-  max-width: 600px; /* Match the registration form width */
-  margin: 100px auto; /* Center the form */
+  max-width: 600px;
+  width: 100%;
+  margin: 20px auto;
 }
 
 /* Login Form Header */
@@ -19,7 +48,8 @@ body {
   text-align: center;
   margin-bottom: 30px;
   color: #007bff;
-  font-weight: 600; /* Make the heading bolder */
+  font-weight: 700;
+  font-size: 28px;
 }
 
 /* Input Field Styling */
@@ -30,11 +60,12 @@ body {
 
 .login-form .form-group input {
   width: 100%;
-  padding: 12px 15px;
+  padding: 15px;
   border: 1px solid #ced4da;
   border-radius: 5px;
   outline: none;
   transition: border-color 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 /* Floating Labels Styling */
@@ -42,7 +73,7 @@ body {
   position: absolute;
   top: 12px;
   left: 15px;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 0 5px;
   color: #6c757d;
   transition: all 0.3s ease;
@@ -60,26 +91,25 @@ body {
 /* Submit Button Styling */
 .submit-btn {
   border: 2px solid #007bff;
-  background-color: white; /* Match registration button background */
-  color: #007bff; /* Blue text color */
-  padding: 12px 30px; /* Add padding for consistency */
+  background-color: #007bff;
+  color: white;
+  padding: 12px 30px;
   font-size: 16px;
   font-weight: 600;
-  border-radius: 30px; /* Rounded corners */
+  border-radius: 30px;
   transition: all 0.3s ease;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle box shadow */
-  display: block; /* Make the button block-level */
-  width: 100%; /* Full width inside container */
-  margin: 20px auto; /* Center the button and add space */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: block;
+  width: 100%;
+  margin: 20px auto;
 }
 
 /* Submit Button Hover Effect */
 .submit-btn:hover {
-  background-color: #007bff;
-  color: white; /* Invert colors */
+  background-color: #0056b3;
   transform: scale(1.05);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Submit Button Active State */
@@ -94,12 +124,12 @@ body {
   text-align: center;
   display: none;
   font-weight: 600;
-  margin-bottom: 20px; /* Add spacing below error message */
+  margin-bottom: 20px;
 }
 
 /* Responsive Adjustments */
 @media (max-width: 576px) {
   .login-form {
-    padding: 30px 20px; /* Reduce padding for smaller screens */
+    padding: 30px 20px;
   }
 }

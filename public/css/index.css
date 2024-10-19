@@ -1,105 +1,177 @@
 /* General Styling */
 body {
-    background-color: #f8f9fa;
-    font-family: 'Roboto', sans-serif;
+  background: linear-gradient(to right, #ddeeff, #a6d9f7); /* Soft gradient background */
+  font-family: 'Roboto', sans-serif;
+}
+
+html, body {
+  height: 100%;
+  background-color: linear-gradient(to right, #ddeeff, #a6d9f7);
+}
+
+body {
+  min-height: 100vh;
+}
+
+.hero-section {
+  background-color: #004080;
+  background-image: url('/images/hero-bg.jpg');
+}
+
+/* Header Section */
+.header-section {
+  background-color: white;
+  border-bottom: 1px solid #ddd;
+}
+
+.header-section .nav-link {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+/* Hero Section */
+.hero-section {
+  color: white;
+  background-size: cover;
+  background-position: center;
+}
+
+/* Typography */
+h1, h2 {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+/* How It Works Section */
+.how-it-works-section h2 {
+  font-size: 32px;
+  margin-bottom: 30px;
+}
+
+.step-card {
+  background-color: #fff;
+  border-radius: 8px;
+  padding: 30px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  text-align: center; 
+}
+
+.step-card:hover {
+  background-color: #007bff;
+  color: white;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.step-card:hover h5, .step-card:hover p {
+  color: white;
+}
+
+
+/* Advantages Cards */
+/* Ensure everything in advantage-card is centered */
+.advantage-card {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease; /* Transition added for smooth color change */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Hover effect for color change */
+.advantage-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  background-color: #007bff; /* Blue color on hover */
+  color: white; /* Change text color to white */
+}
+
+/* Ensure the image and text inside the advantage cards are also centered */
+.advantage-card img {
+  margin-bottom: 15px;
+  transition: filter 0.3s ease; /* Transition for smooth effect */
+}
+
+
+
+.advantage-card h5, .advantage-card p {
+  text-align: center;
+  transition: color 0.3s ease; /* Smooth color transition for text */
+}
+
+/* Adjust text color on hover */
+.advantage-card:hover h5, .advantage-card:hover p {
+  color: white; /* White text on hover */
+}
+
+
+/* Call to Action */
+.cta-section {
+  background-color: #004080;
+}
+
+/* Social Media Icons */
+.social-icons a {
+  font-size: 1.5rem;
+  transition: color 0.3s ease;
+  align-items: flex-end;
+}
+
+.social-icons a:hover {
+  color: #ff9900;
+}
+
+
+/* Footer Styling */
+.footer {
+  background-color: #343a40;
+  padding: 20px 0;
+  color: white;
+}
+
+.footer-nav a {
+  color: white;
+  margin: 0 10px;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.footer-nav a:hover {
+  text-decoration: underline;
+}
+
+/* Social Media Icons on Right */
+.social-icons a {
+  font-size: 1.5rem;
+  margin-left: 10px;
+  color: white;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+
+/* Hover Effect for Social Media Icons */
+.social-icons a:hover {
+  color: #ff9900;
+  transform: scale(1.2);
+}
+
+/* Responsive Footer Adjustments */
+@media (max-width: 768px) {
+  .footer .text-start, .footer .text-center {
+      text-align: center;
+      margin-bottom: 10px;
   }
-  
-  /* Header Section */
-  .header-section {
-    background-color: white;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .header-section .nav-link {
-    font-weight: bold;
-    font-size: 1.1rem;
-  }
-  
-  /* Hero Section */
-  .hero-section {
-    color: white;
-    background-size: cover;
-    background-position: center;
-  }
-  
-  /* Typography */
-  h1, h2 {
-    font-family: 'Roboto', sans-serif;
-    font-weight: 700;
-    line-height: 1.2;
-  }
-  
-  p {
-    font-size: 1.1rem;
-    line-height: 1.8;
-  }
-  
-  /* Advantages Cards */
-  .advantage-card {
-    background-color: #fff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .advantage-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Call to Action */
-  .cta-section {
-    background-color: #004080;
-  }
-  
-  /* Social Media Icons */
-  .social-icons a {
-    font-size: 1.5rem;
-    transition: color 0.3s ease;
-  }
-  
-  .social-icons a:hover {
-    color: #ff9900;
-  }
-  
-  /* Footer Styling */
-  .footer {
-    background-color: #343a40; /* Dark background */
-    padding: 20px 0; /* Reduce vertical padding */
-    color: white;
-  }
-  
-  .footer-nav a {
-    color: white;
-    margin: 0 10px;
-    font-size: 1rem;
-    text-decoration: none;
-  }
-  
-  .footer-nav a:hover {
-    text-decoration: underline;
-  }
-  
-  /* Social Media Icons */
-  .social-icons a {
-    font-size: 1.5rem;
-    margin: 0 10px;
-    color: white;
-    transition: color 0.3s ease, transform 0.3s ease;
-  }
-  
-  /* Hover Effect for Social Media Icons */
-  .social-icons a:hover {
-    color: #ff9900;
-    transform: scale(1.2);
-  }
-  
-  /* Responsive Footer Adjustments */
-  @media (max-width: 768px) {
-    .footer .text-start, .footer .text-end {
-        text-align: center;
-        margin-bottom: 10px;
-    }
-  }
-  
+}
+
