@@ -1,0 +1,96 @@
+<html>
+<link rel="stylesheet" href="/Css/register.css">
+
+<body>
+     <div></div>
+<a href="/" class="btn btn-primary mt-3">Home</a>
+        </div>
+    <div class="registration-form">
+        <h2>E-Invoice Registration</h2>
+        <form id="registrationForm" method="POST" action="/register">
+            <!-- Business Name -->
+            <div class="form-group">
+                <input type="text" id="businessName" required placeholder=" " autocomplete="off">
+                <label for="businessName">Business Name <span class="text-danger">*</span></label>
+            </div>
+
+            <!-- SSM Registration Number -->
+            <div class="form-group">
+                <input type="text" id="ssmNumber" required placeholder=" " autocomplete="off">
+                <label for="ssmNumber">SSM Registration Number <span class="text-danger">*</span></label>
+                <small class="form-text text-muted">As registered with the Companies Commission of Malaysia
+                    (SSM).</small>
+            </div>
+
+            <!-- Taxpayer Identification Number (TIN) -->
+            <div class="form-group">
+                <input type="text" id="taxNumber" required placeholder=" " autocomplete="off">
+                <label for="taxNumber">Taxpayer Identification Number (TIN) <span class="text-danger">*</span></label>
+                <small class="form-text text-muted">Your TIN issued by the Inland Revenue Board (LHDN).</small>
+            </div>
+
+            <!-- Contact Person Name -->
+            <div class="form-group">
+                <input type="text" id="contactName" required placeholder=" " autocomplete="off">
+                <label for="contactName">Contact Person Name <span class="text-danger">*</span></label>
+            </div>
+
+            <!-- Contact Email -->
+            <div class="form-group">
+                <input type="email" id="contactEmail" required placeholder=" " autocomplete="off">
+                <label for="contactEmail">Contact Email <span class="text-danger">*</span></label>
+            </div>
+
+            <!-- Contact Phone Number -->
+            <div class="form-group">
+                <input type="tel" id="contactPhone" required placeholder=" " autocomplete="off">
+                <label for="contactPhone">Contact Phone Number <span class="text-danger">*</span></label>
+            </div>
+
+            <div class="form-group">
+                <input type="password" id="password" required placeholder=" " autocomplete="off">
+                <label for="password">Password <span class="text-danger">*</span></label>
+            </div>
+
+
+            <!-- Business Address -->
+            <div class="form-group">
+                <textarea id="address" rows="3" required placeholder=" "></textarea>
+                <label for="address">Business Address <span class="text-danger">*</span></label>
+            </div>
+
+
+            <!-- Submit Button with Spinner -->
+            <button type="submit" class="submit-btn">
+                Register
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </button>
+
+                <button class="custom-signin-btn" onclick="location.href='/login'">
+                    Already Registered? Sign In
+                    <div class="spinner-border text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </button>
+
+        </form>
+
+
+        <!-- Success Message -->
+        <div class="success-message" id="successMessage">
+            <h4>Registration Successful!</h4>
+            <p>Thank you for registering for E-Invoicing. We will contact you shortly.</p>
+            <a href="/login" class="submit-btn">
+                Login </a>
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript for Form Validation and Animations -->
+    <script src="/js/register.js"></script>
+
+
+</body>
+</html>
