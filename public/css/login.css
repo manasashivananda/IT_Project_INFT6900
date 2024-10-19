@@ -1,0 +1,105 @@
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #f0f2f5;
+  overflow-x: hidden;
+}
+
+/* Login Form Container */
+.login-form {
+  background-color: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+  max-width: 600px; /* Match the registration form width */
+  margin: 100px auto; /* Center the form */
+}
+
+/* Login Form Header */
+.login-form h2 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #007bff;
+  font-weight: 600; /* Make the heading bolder */
+}
+
+/* Input Field Styling */
+.login-form .form-group {
+  position: relative;
+  margin-bottom: 25px;
+}
+
+.login-form .form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ced4da;
+  border-radius: 5px;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+/* Floating Labels Styling */
+.login-form .form-group label {
+  position: absolute;
+  top: 12px;
+  left: 15px;
+  background-color: white;
+  padding: 0 5px;
+  color: #6c757d;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+/* Floating Label Animation */
+.login-form .form-group input:focus + label,
+.login-form .form-group input:not(:placeholder-shown) + label {
+  top: -10px;
+  font-size: 0.85em;
+  color: #007bff;
+}
+
+/* Submit Button Styling */
+.submit-btn {
+  border: 2px solid #007bff;
+  background-color: white; /* Match registration button background */
+  color: #007bff; /* Blue text color */
+  padding: 12px 30px; /* Add padding for consistency */
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 30px; /* Rounded corners */
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Subtle box shadow */
+  display: block; /* Make the button block-level */
+  width: 100%; /* Full width inside container */
+  margin: 20px auto; /* Center the button and add space */
+}
+
+/* Submit Button Hover Effect */
+.submit-btn:hover {
+  background-color: #007bff;
+  color: white; /* Invert colors */
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Enhance shadow on hover */
+}
+
+/* Submit Button Active State */
+.submit-btn:active {
+  transform: scale(1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Error Message Styling */
+.error-message {
+  color: red;
+  text-align: center;
+  display: none;
+  font-weight: 600;
+  margin-bottom: 20px; /* Add spacing below error message */
+}
+
+/* Responsive Adjustments */
+@media (max-width: 576px) {
+  .login-form {
+    padding: 30px 20px; /* Reduce padding for smaller screens */
+  }
+}

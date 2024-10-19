@@ -1,0 +1,34 @@
+<link rel="stylesheet" href="/Css/login.css">
+
+<body>
+     <div>
+<a href="/" class="btn btn-primary mt-3">Home</a>
+        </div>
+    <div class="login-form">
+        <h2>Login</h2>
+        <form id="loginForm" method="POST" action="/login">
+       
+        
+            <!-- Contact Email -->
+            <div class="form-group">
+                <input type="email" id="contactEmail" class="form-control" required placeholder=" " autocomplete="off">
+                <label for="contactEmail">Email <span class="text-danger">*</span></label>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <input type="password" id="password" class="form-control" required placeholder=" " autocomplete="off">
+                <label for="password">Password <span class="text-danger">*</span></label>
+            </div>
+
+            <div class="error-message" id="errorMessage">Invalid email or password.</div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="submit-btn">Login</button>
+        </form>
+    </div>
+
+    <!-- JavaScript for Form Submission -->
+    <script src="/js/login.js"></script>
+    
+</body>
