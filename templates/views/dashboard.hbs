@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="/css/style.css" />
+        <link rel="stylesheet" href="/css/dashboard.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  </head>
+  <body>
+    <div class="dashboard-container">
+      <header>
+        <h1>Welcome, {{user.name}}</h1>
+        <p>Business Name: {{user.businessName}}</p>
+        <p>Email: {{user.email}}</p>
+        <p>Contact Phone: {{user.contactPhone}}</p>
+      </header>
+      <section class="statistics">
+        <h2>Statistics</h2>
+        <ul>
+          <li>Total Registrations: {{statistics.totalRegistrations}}</li>
+          <li>Pending Invoices: {{statistics.pendingInvoices}}</li>
+          <li>Completed Invoices: {{statistics.completedInvoices}}</li>
+        </ul>
+      </section>
+      <section class="actions">
+        <h2>Actions</h2>
+        <button id="refreshStats">Refresh Statistics</button>
+        <button id="createInvoice" onclick="location.href='/invoice'">Create Invoice</button>
+      </section>
+    </div>
+    <script src="/js/dashboard.js"></script>
+  </body>
+</html>
