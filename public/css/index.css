@@ -1,21 +1,21 @@
 /* General Styling */
-body {
+body, html {
+  height: 100%;
   background: linear-gradient(to right, #ddeeff, #a6d9f7); /* Soft gradient background */
   font-family: 'Roboto', sans-serif;
 }
 
-html, body {
-  height: 100%;
-  background-color: linear-gradient(to right, #ddeeff, #a6d9f7);
-}
-
 body {
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
 
 .hero-section {
   background-color: #004080;
   background-image: url('/images/hero-bg.jpg');
+  background-size: cover;
+  background-position: center;
 }
 
 /* Header Section */
@@ -60,7 +60,6 @@ p {
   padding: 30px;
   transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  text-align: center; 
 }
 
 .step-card:hover {
@@ -74,9 +73,12 @@ p {
   color: white;
 }
 
+.step-card img {
+  margin-bottom: 15px;
+  transition: filter 0.3s ease; /* Transition for smooth effect */
+}
 
-/* Advantages Cards */
-/* Ensure everything in advantage-card is centered */
+/* advantage-card is centered */
 .advantage-card {
   background-color: #fff;
   padding: 30px;
@@ -104,7 +106,10 @@ p {
   transition: filter 0.3s ease; /* Transition for smooth effect */
 }
 
-
+/* Change the color of the image icon to match the hover */
+/* .advantage-card:hover img {
+  filter: brightness(0) invert(1); /* Inverts the color of the image to make it suitable for a dark background */
+} */
 
 .advantage-card h5, .advantage-card p {
   text-align: center;
@@ -126,13 +131,11 @@ p {
 .social-icons a {
   font-size: 1.5rem;
   transition: color 0.3s ease;
-  align-items: flex-end;
 }
 
 .social-icons a:hover {
   color: #ff9900;
 }
-
 
 /* Footer Styling */
 .footer {
@@ -152,15 +155,6 @@ p {
   text-decoration: underline;
 }
 
-/* Social Media Icons on Right */
-.social-icons a {
-  font-size: 1.5rem;
-  margin-left: 10px;
-  color: white;
-  transition: color 0.3s ease, transform 0.3s ease;
-}
-
-
 /* Hover Effect for Social Media Icons */
 .social-icons a:hover {
   color: #ff9900;
@@ -174,4 +168,3 @@ p {
       margin-bottom: 10px;
   }
 }
-
