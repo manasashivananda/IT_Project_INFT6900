@@ -10,6 +10,7 @@ const express = require('express');
   const { create } = require('xmlbuilder2');
   const session = require("express-session"); // Import express-session
   require("dotenv").config();
+  const Invoice = require('./models/invoice');
 
   const app = express();
   const PORT = process.env.PORT || 3000;
@@ -162,6 +163,126 @@ function isAuthenticated(req, res, next) {
         completedInvoices: 95,
       },
     });
+});
+
+// Route to render e-invoice form
+app.get('/invoice', isAuthenticated, (req, res) => {
+  res.render('e-invoice', { title: 'Create E-Invoice' });
+});
+
+// POST route for invoice creation
+app.post('/api/invoice', async (req, res) => {
+  try {
+      const { invoiceNumber, invoiceDate, businessName, ssmNumber, taxNumber, address, contactName, contactEmail, contactPhone, items } = req.body;
+
+      // Check for duplicate invoice number
+      const existingInvoice = await Invoice.findOne({ invoiceNumber });
+      if (existingInvoice) {
+          return res.status(400).json({ message: 'Invoice number already exists.' });
+      }
+
+      let totalAmount = 0;
+      items.forEach(item => {
+          item.total = item.quantity * item.price;
+          totalAmount += item.total;
+      });
+
+      const newInvoice = new Invoice({
+          invoiceNumber,
+          invoiceDate,
+          businessName,
+          ssmNumber,
+          taxNumber,
+          address,
+          contactName,
+          contactEmail,
+          contactPhone,
+          items,
+          totalAmount,
+      });
+
+      // Save invoice to MongoDB
+      await newInvoice.save();
+      res.status(201).json({ message: 'Invoice created successfully.', invoice: newInvoice });
+      // Redirect to success page with a message
+    res.render('invoice-success', { 
+        title: 'Invoice Created', 
+        message: 'Invoice created successfully!', 
+        invoiceNumber 
+    });
+  } catch (error) {
+      console.error('Error creating invoice:', error);
+      res.status(500).json({ message: `Error creating invoice: ${error.message}` });
+  }
+});
+
+// Route to download invoice as XML
+app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
+  try {
+      const { invoiceNumber } = req.params;
+
+      // Fetch the invoice
+      const invoice = await Invoice.findOne({ invoiceNumber });
+      if (!invoice) {
+          return res.status(404).json({ message: 'Invoice not found.' });
+      }
+
+      // Create XML
+      const xml = create({ version: '1.0' })
+          .ele('Invoice')
+          .ele('InvoiceNumber').txt(invoice.invoiceNumber).up()
+          .ele('InvoiceDate').txt(invoice.invoiceDate).up()
+          .ele('BusinessName').txt(invoice.businessName).up()
+          .ele('SSMNumber').txt(invoice.ssmNumber).up()
+          .ele('TaxNumber').txt(invoice.taxNumber).up()
+          .ele('Address').txt(invoice.address).up()
+          .ele('ContactInformation')
+              .ele('ContactName').txt(invoice.contactName).up()
+              .ele('ContactEmail').txt(invoice.contactEmail).up()
+              .ele('ContactPhone').txt(invoice.contactPhone).up()
+          .up()
+          .ele('Items');
+
+      invoice.items.forEach(item => {
+          xml.ele('Item')
+              .ele('ItemName').txt(item.itemName).up()
+              .ele('Description').txt(item.description).up()
+              .ele('Quantity').txt(item.quantity).up()
+              .ele('Price').txt(item.price).up()
+              .ele('Total').txt(item.total).up()
+          .up();
+      });
+
+      xml.up()
+          .ele('TotalAmount').txt(invoice.totalAmount).up();
+
+      const xmlContent = xml.end({ prettyPrint: true });
+
+      
+
+      // Save XML to file
+    //  const filePath = path.join(__dirname, 'invoices', `invoice_${invoiceNumber}.xml`);
+    //   fs.writeFileSync(filePath, xmlContent);
+    const invoiceDir = path.join(__dirname, 'invoices');  // Path to the invoices directory
+
+// Check if the directory exists, if not, create it
+if (!fs.existsSync(invoiceDir)) {
+    fs.mkdirSync(invoiceDir, { recursive: true });
+}
+
+// Now create the file path
+const filePath = path.join(invoiceDir, `invoice_${invoiceNumber}.xml`);
+
+// Write the XML content to the file
+fs.writeFileSync(filePath, xmlContent);
+      
+
+      // Send the file for download
+      res.download(filePath);
+  } catch (error) {
+      console.error('Error generating XML:', error);
+      res.status(500).json({ message: 'Error generating XML file.' });
+  }
 });
 
   // Start the server

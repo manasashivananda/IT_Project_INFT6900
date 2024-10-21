@@ -1,0 +1,247 @@
+/* Global Styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(to right, #ddeeff, #a6d9f7); /* Soft gradient background */
+    overflow-x: hidden;
+}
+
+/* Heading Styling */
+h1 {
+    text-align: center;
+    color: #007bff;
+    margin: 40px 0;
+    font-weight: 700;
+}
+
+
+
+/* Form Container Styling */
+form {
+    background-color: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 40px auto;
+    position: relative;
+}
+
+/* Form Group Styling */
+form .form-group {
+    position: relative;
+    margin-bottom: 25px;
+}
+
+form label {
+    position: absolute;
+    top: 12px;
+    left: 15px;
+    background-color: white;
+    padding: 0 5px;
+    color: #6c757d;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+form input, form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    outline: none;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+/* Floating Label Effect */
+form input:focus + label,
+form input:not(:placeholder-shown) + label,
+form textarea:focus + label,
+form textarea:not(:placeholder-shown) + label {
+    top: -10px;
+    font-size: 0.85em;
+    color: #007bff;
+}
+
+/* Items Section */
+#items {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+/* Item Grid Styling */
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.item-fields {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+}
+
+.item-fields input {
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    flex: 1;
+}
+
+.item input[disabled] {
+    background-color: #e9ecef; /* Light gray for disabled */
+    color: #6c757d; /* Gray text for disabled fields */
+    cursor: not-allowed; /* Change cursor to indicate disabled */
+}
+
+/* Item Buttons Styling */
+.item-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* General Button Styling */
+button {
+    padding: 10px 20px;
+    margin: 10px 0;
+    background-color: #007bff;
+    color: #fff;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Button Hover Effects */
+button:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+button:active {
+    transform: scale(1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Back to Dashboard Button Styling */
+.back-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #007bff; /* Match with the site's theme */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.back-btn:hover {
+    background-color: #0056b3; /* Slightly darker blue on hover */
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.back-btn i {
+    margin-right: 5px; /* Space between icon and text */
+}
+
+/* Button Container */
+.button-container {
+    text-align: center; /* Center content */
+    margin-top: 20px; /* Add margin to create space between buttons */
+}
+
+/* Button Styling */
+.add-item-btn, .create-invoice-btn {
+    padding: 12px 30px;
+    background-color: #007bff; /* Blue color for the buttons */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover Effect for Buttons */
+.add-item-btn:hover, .create-invoice-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+
+
+/* Edit and Delete Buttons */
+.edit-btn, .delete-btn {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 50%; /* Round buttons */
+    margin-left: 10px;
+    border: none;
+    cursor: pointer;
+}
+
+.edit-btn {
+    background-color: #28a745; /* Green for edit/save */
+    color: #fff;
+}
+
+.edit-btn:hover {
+    background-color: #218838;
+}
+
+.delete-btn {
+    background-color: #dc3545; /* Red for delete */
+    color: #fff;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+}
+
+/* Placeholder for Disabled Inputs */
+.item input[disabled] {
+    background-color: #e9ecef;
+    color: #495057;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    form {
+        width: 90%;
+    }
+
+    .item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .item-buttons {
+        margin-top: 10px;
+    }
+}
+

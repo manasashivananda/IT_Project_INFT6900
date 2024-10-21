@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<Invoice>
+  <InvoiceNumber>in12</InvoiceNumber>
+  <InvoiceDate>Mon Oct 21 2024 11:00:00 GMT+1100 (Australian Eastern Daylight Time)</InvoiceDate>
+  <BusinessName>asd</BusinessName>
+  <SSMNumber>12</SSMNumber>
+  <TaxNumber>123</TaxNumber>
+  <Address>as23</Address>
+  <ContactInformation>
+    <ContactName>barbie</ContactName>
+    <ContactEmail>man@gmail.com</ContactEmail>
+    <ContactPhone>012-2345678</ContactPhone>
+  </ContactInformation>
+  <Items>
+    <Item>
+      <ItemName>iphone</ItemName>
+      <Description/>
+      <Quantity>1</Quantity>
+      <Price>2000</Price>
+      <Total>2000</Total>
+    </Item>
+  </Items>
+  <TotalAmount>2000</TotalAmount>
+</Invoice>

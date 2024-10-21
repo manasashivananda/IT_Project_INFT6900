@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create E-Invoice</title>
+    <link rel="stylesheet" href="/Css/styles.css">
+    <link rel="stylesheet" href="/Css/invoice.css">
+    <!-- Font Awesome for Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+    />
+</head>
+
+<body>
+
+    <!-- Back to Dashboard Button -->
+    <button type="button" class="back-btn" onclick="location.href='/dashboard'">
+        <i class="fas fa-arrow-left"></i>Dashboard
+    </button>
+
+<h1><i class="fas fa-file-invoice"></i> Create E-Invoice</h1>
+
+    <form id="invoiceForm" method="POST" action="/create-invoice">
+        <!-- Invoice Header Section -->
+        <div class="form-group">
+            <input type="text" id="invoiceNumber" name="invoiceNumber" placeholder=" " required>
+            <label for="invoiceNumber">Invoice Number</label>
+        </div>
+        <div class="form-group">
+            <input type="date" id="invoiceDate" name="invoiceDate" placeholder=" " required>
+            <label for="invoiceDate">Invoice Date</label>
+        </div>
+
+        <!-- Supplier Information -->
+        <h2>Supplier Information</h2>
+        <div class="form-group">
+            <input type="text" id="businessName" name="businessName" placeholder=" " required>
+            <label for="businessName">Business Name</label>
+        </div>
+        <div class="form-group">
+            <input type="text" id="ssmNumber" name="ssmNumber" placeholder=" " required>
+            <label for="ssmNumber">SSM Number</label>
+        </div>
+        <div class="form-group">
+            <input type="text" id="taxNumber" name="taxNumber" placeholder=" " required>
+            <label for="taxNumber">Tax Number</label>
+        </div>
+        <div class="form-group">
+            <textarea id="address" name="address" placeholder=" " required></textarea>
+            <label for="address">Address</label>
+        </div>
+
+        <!-- Contact Information -->
+        <h2>Contact Information</h2>
+        <div class="form-group">
+            <input type="text" id="contactName" name="contactName" placeholder=" " required>
+            <label for="contactName">Contact Name</label>
+        </div>
+        <div class="form-group">
+            <input type="email" id="contactEmail" name="contactEmail" placeholder=" " required>
+            <label for="contactEmail">Contact Email</label>
+        </div>
+        <div class="form-group">
+            <input type="tel" id="contactPhone" name="contactPhone" placeholder=" " required>
+            <label for="contactPhone">Contact Phone</label>
+        </div>
+
+        <!-- Items Section -->
+        
+          
+    <h2>Items</h2>
+<div id="items">
+    <!-- First static item example -->
+    <div class="item">
+        <div class="item-fields">
+            <input type="text" name="items[0][itemName]" placeholder="Item Name" required disabled>
+            <input type="number" name="items[0][quantity]" placeholder="Quantity" required disabled>
+            <input type="number" name="items[0][price]" placeholder="Price" required disabled>
+            <input type="number" name="items[0][total]" placeholder="Total" required disabled>
+        </div>
+        <div class="item-buttons">
+            <button type="button" class="edit-btn"><i class="fas fa-pencil-alt"></i></button>
+            <button type="button" class="delete-btn"><i class="fas fa-trash-alt"></i></button>
+        </div>
+    </div>
+</div>
+
+        <!-- Add Item Button on a separate line -->
+        <div class="button-container">
+            <button type="button" id="addItem">
+                <i class="fas fa-plus"></i> Add Item
+            </button>
+        </div>
+
+        <!-- Create Invoice Button on a separate line -->
+        <div class="button-container">
+            <button type="submit">
+                <i class="fas fa-file-invoice"></i> Create Invoice
+            </button>
+        </div>
+    </form>
+
+</body>
+<script src="/js/invoice.js"></script>
+
+</html>
