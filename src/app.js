@@ -175,6 +175,8 @@ app.get('/invoice', isAuthenticated, (req, res) => {
 
 
 // POST route for invoice creation
+
+// POST route for invoice creation
 app.post('/api/invoice', async (req, res) => {
   try {
       const { invoiceNumber, invoiceDate, businessName, ssmNumber, taxNumber, address, contactName, contactEmail, contactPhone, buyerName, buyerAddress, dueDate, items } = req.body;
@@ -225,13 +227,61 @@ app.post('/api/invoice', async (req, res) => {
 
       // Save invoice to MongoDB
       await newInvoice.save();
-        // Add this activity to the session for recent activities
-        const activityMessage = `Invoice #${invoiceNumber} created on ${invoiceDate}`;
-        if (!req.session.activities) {
-            req.session.activities = [];
-        }
-        req.session.activities.push(activityMessage);
-      res.status(201).json({ message: 'Invoice created successfully.', invoice: newInvoice });
+
+      // Add this activity to the session for recent activities
+      const activityMessage = `Invoice #${invoiceNumber} created on ${invoiceDate}`;
+      if (!req.session.activities) {
+          req.session.activities = [];
+      }
+      req.session.activities.push(activityMessage);
+
+      // Generate XML
+      const xml = create({ version: '1.0' })
+          .ele('Invoice')
+          .ele('InvoiceNumber').txt(invoiceNumber).up()
+          .ele('InvoiceDate').txt(invoiceDate).up()
+          .ele('BusinessName').txt(businessName).up()
+          .ele('SSMNumber').txt(ssmNumber).up()
+          .ele('TaxNumber').txt(taxNumber).up()
+          .ele('Address').txt(address).up()
+          .ele('BuyerName').txt(buyerName).up()
+          .ele('BuyerAddress').txt(buyerAddress).up()
+          .ele('DueDate').txt(dueDate).up()
+          .ele('Items');
+
+      items.forEach(item => {
+          xml.ele('Item')
+              .ele('ItemCode').txt(item.itemCode).up()
+              .ele('Description').txt(item.description).up()
+              .ele('Quantity').txt(item.quantity).up()
+              .ele('UnitPrice').txt(item.price).up()
+              .ele('Tax').txt(item.tax).up()
+              .ele('Total').txt(item.total).up()
+          .up();
+      });
+
+      xml.up()
+          .ele('TotalAmount').txt(totalAmount).up();
+
+      const xmlContent = xml.end({ prettyPrint: true });
+
+      // Define file path for saving XML
+      const invoiceDir = path.join(__dirname, 'invoices');
+      if (!fs.existsSync(invoiceDir)) {
+          fs.mkdirSync(invoiceDir);
+      }
+      const filePath = path.join(invoiceDir, `invoice_${invoiceNumber}.xml`);
+
+      // Write the XML content to a file
+      fs.writeFileSync(filePath, xmlContent);
+
+      // Send the file download response
+      res.status(201).json({
+        message: 'Invoice created successfully.',
+        invoice: newInvoice,
+        downloadLink: `/download-invoice-xml/${invoiceNumber}`
+      });
+
   } catch (error) {
       console.error('Error creating invoice:', error);
       res.status(500).json({ message: `Error creating invoice: ${error.message}` });
@@ -239,7 +289,7 @@ app.post('/api/invoice', async (req, res) => {
 });
 
 
-
+// Route to download invoice as XML
 // Route to download invoice as XML
 app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
   try {
@@ -251,53 +301,22 @@ app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
           return res.status(404).json({ message: 'Invoice not found.' });
       }
 
-      // Create XML
-      const xml = create({ version: '1.0' })
-          .ele('Invoice')
-          .ele('InvoiceNumber').txt(invoice.invoiceNumber).up()
-          .ele('InvoiceDate').txt(invoice.invoiceDate).up()
-          .ele('DueDate').txt(invoice.dueDate).up()  // Add due date to XML
-          .ele('BusinessName').txt(invoice.businessName).up()
-          .ele('SSMNumber').txt(invoice.ssmNumber).up()
-          .ele('TaxNumber').txt(invoice.taxNumber).up()
-          .ele('Address').txt(invoice.address).up()
-          .ele('BuyerInformation')
-              .ele('BuyerName').txt(invoice.buyerName).up()
-              .ele('BuyerAddress').txt(invoice.buyerAddress).up()
-          .up()
-          .ele('Items');
+      // Define file path
+      const filePath = path.join(__dirname, 'invoices', `invoice_${invoiceNumber}.xml`);
 
-      invoice.items.forEach(item => {
-          xml.ele('Item')
-              .ele('ItemCode').txt(item.itemCode).up()
-              .ele('Description').txt(item.description).up()
-              .ele('Quantity').txt(item.quantity).up()
-              .ele('Price').txt(item.price).up()
-              .ele('Tax').txt(item.tax).up()  // Add tax to XML
-              .ele('Total').txt(item.total).up()
-          .up();
-      });
-
-      xml.up()
-          .ele('TotalAmount').txt(invoice.totalAmount).up();
-
-      const xmlContent = xml.end({ prettyPrint: true });
-
-      // Save XML to file
-      const invoiceDir = path.join(__dirname, 'invoices');
-      if (!fs.existsSync(invoiceDir)) {
-          fs.mkdirSync(invoiceDir);
+      // Check if the file exists
+      if (!fs.existsSync(filePath)) {
+          return res.status(404).json({ message: 'XML file not found.' });
       }
-      const filePath = path.join(invoiceDir, `invoice_${invoiceNumber}.xml`);
-      fs.writeFileSync(filePath, xmlContent);
 
-      // Send the file for download
+      // Send the XML file for download
       res.download(filePath);
   } catch (error) {
       console.error('Error generating XML:', error);
       res.status(500).json({ message: 'Error generating XML file.' });
   }
 });
+
 
   // Start the server
 app.listen(PORT, () => {

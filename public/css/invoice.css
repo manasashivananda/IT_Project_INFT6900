@@ -153,3 +153,24 @@ button:hover {
 .invoice-footer p {
     color: #6c757d;
 }
+
+/* Total Amount and Payment Terms Section */
+#totalAmountContainer {
+    text-align: center;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#totalAmountContainer h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+#totalAmountContainer p {
+    font-size: 16px;
+    color: #6c757d;
+}
