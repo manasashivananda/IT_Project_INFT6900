@@ -1,5 +1,4 @@
-
-    // Wait until the DOM is fully loaded
+// Wait until the DOM is fully loaded
     document.addEventListener('DOMContentLoaded', () => {
         // Select the form element
         const invoiceForm = document.getElementById('invoiceForm');
