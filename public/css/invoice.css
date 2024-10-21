@@ -123,6 +123,12 @@ button {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* Button Container */
+.button-container {
+    text-align: center; /* Center content */
+    margin-top: 20px; /* Add margin to create space between buttons */
+}
+
 /* Button Hover Effects */
 button:hover {
     background-color: #0056b3;
