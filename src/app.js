@@ -150,19 +150,22 @@ function isAuthenticated(req, res, next) {
 }
 
   // Route to render the dashboard page
-  app.get("/dashboard", isAuthenticated, (req, res) => {
-    console.log("Session Data:", req.session); // Check if session data exists
-  
-    const user = req.session.user;
-    res.render("dashboard", {
-      title: "Dashboard",
-      user,
-      statistics: {
-        totalRegistrations: 100,
-        pendingInvoices: 5,
-        completedInvoices: 95,
-      },
-    });
+ // Route to render the dashboard page
+app.get("/dashboard", isAuthenticated, (req, res) => {
+  const user = req.session.user;
+  const activities = req.session.activities || []; // Get activities from session
+  res.render("dashboard", {
+    title: "Dashboard",
+    user: {
+      ...user,
+      activities, // Pass activities to the template
+    },
+    statistics: {
+      totalRegistrations: 100,
+      pendingInvoices: 5,
+      completedInvoices: 95,
+    },
+  });
 });
 
 // Route to render e-invoice form
@@ -170,7 +173,7 @@ app.get('/invoice', isAuthenticated, (req, res) => {
   res.render('e-invoice', { title: 'Create E-Invoice' });
 });
 
-// POST route for invoice creation
+
 // POST route for invoice creation
 app.post('/api/invoice', async (req, res) => {
   try {
@@ -222,6 +225,12 @@ app.post('/api/invoice', async (req, res) => {
 
       // Save invoice to MongoDB
       await newInvoice.save();
+        // Add this activity to the session for recent activities
+        const activityMessage = `Invoice #${invoiceNumber} created on ${invoiceDate}`;
+        if (!req.session.activities) {
+            req.session.activities = [];
+        }
+        req.session.activities.push(activityMessage);
       res.status(201).json({ message: 'Invoice created successfully.', invoice: newInvoice });
   } catch (error) {
       console.error('Error creating invoice:', error);
@@ -294,4 +303,3 @@ app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
-
