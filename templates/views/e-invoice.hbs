@@ -8,10 +8,7 @@
     <link rel="stylesheet" href="/Css/styles.css">
     <link rel="stylesheet" href="/Css/invoice.css">
     <!-- Font Awesome for Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
 </head>
 
 <body>
@@ -21,7 +18,7 @@
         <i class="fas fa-arrow-left"></i>Dashboard
     </button>
 
-<h1><i class="fas fa-file-invoice"></i> Create E-Invoice</h1>
+    <h1><i class="fas fa-file-invoice"></i> Create E-Invoice</h1>
 
     <form id="invoiceForm" method="POST" action="/create-invoice">
         <!-- Invoice Header Section -->
@@ -32,6 +29,12 @@
         <div class="form-group">
             <input type="date" id="invoiceDate" name="invoiceDate" placeholder=" " required>
             <label for="invoiceDate">Invoice Date</label>
+        </div>
+
+        <!-- New Due Date Field -->
+        <div class="form-group">
+            <input type="date" id="dueDate" name="dueDate" placeholder=" " required>
+            <label for="dueDate">Due Date</label>
         </div>
 
         <!-- Supplier Information -->
@@ -53,40 +56,36 @@
             <label for="address">Address</label>
         </div>
 
-        <!-- Contact Information -->
-        <h2>Contact Information</h2>
+        <!-- Buyer Information -->
+        <h2>Buyer Information</h2>
         <div class="form-group">
-            <input type="text" id="contactName" name="contactName" placeholder=" " required>
-            <label for="contactName">Contact Name</label>
+            <input type="text" id="buyerName" name="buyerName" placeholder=" " required>
+            <label for="buyerName">Buyer Name</label>
         </div>
         <div class="form-group">
-            <input type="email" id="contactEmail" name="contactEmail" placeholder=" " required>
-            <label for="contactEmail">Contact Email</label>
-        </div>
-        <div class="form-group">
-            <input type="tel" id="contactPhone" name="contactPhone" placeholder=" " required>
-            <label for="contactPhone">Contact Phone</label>
+            <textarea id="buyerAddress" name="buyerAddress" placeholder=" " required></textarea>
+            <label for="buyerAddress">Buyer Address</label>
         </div>
 
         <!-- Items Section -->
-        
-          
-    <h2>Items</h2>
-<div id="items">
-    <!-- First static item example -->
-    <div class="item">
-        <div class="item-fields">
-            <input type="text" name="items[0][itemName]" placeholder="Item Name" required disabled>
-            <input type="number" name="items[0][quantity]" placeholder="Quantity" required disabled>
-            <input type="number" name="items[0][price]" placeholder="Price" required disabled>
-            <input type="number" name="items[0][total]" placeholder="Total" required disabled>
+        <h2>Items</h2>
+        <div id="items">
+            <!-- First static item example -->
+            <div class="item">
+                <div class="item-fields">
+                    <input type="text" name="items[0][itemCode]" placeholder="Item Code" required>
+                    <input type="text" name="items[0][description]" placeholder="Description" required> <!-- Changed to description -->
+                    <input type="number" name="items[0][quantity]" placeholder="Quantity" required>
+                    <input type="number" name="items[0][price]" placeholder="Unit Price" required>
+                    <input type="number" name="items[0][tax]" placeholder="Tax (%)" required>
+                    <input type="text" name="items[0][total]" placeholder="Total" readonly>
+                </div>
+                <div class="item-buttons">
+                    <button type="button" class="edit-btn" data-action="save"><i class="fas fa-save"></i></button>
+                    <button type="button" class="delete-btn"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
         </div>
-        <div class="item-buttons">
-            <button type="button" class="edit-btn"><i class="fas fa-pencil-alt"></i></button>
-            <button type="button" class="delete-btn"><i class="fas fa-trash-alt"></i></button>
-        </div>
-    </div>
-</div>
 
         <!-- Add Item Button on a separate line -->
         <div class="button-container">
@@ -103,7 +102,15 @@
         </div>
     </form>
 
+    <!-- Total Amount Section -->
+    <div class="total-amount-section">
+        <h3>Total Amount: <span id="totalAmount">0</span> MYR</h3>
+        <p>Payment Terms: Please pay within 30 days.</p>
+    </div>
+
+    <!-- JavaScript File for Invoice Logic -->
+    <script src="/js/invoice.js"></script>
+
 </body>
-<script src="/js/invoice.js"></script>
 
 </html>

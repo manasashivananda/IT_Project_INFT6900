@@ -171,9 +171,15 @@ app.get('/invoice', isAuthenticated, (req, res) => {
 });
 
 // POST route for invoice creation
+// POST route for invoice creation
 app.post('/api/invoice', async (req, res) => {
   try {
-      const { invoiceNumber, invoiceDate, businessName, ssmNumber, taxNumber, address, contactName, contactEmail, contactPhone, items } = req.body;
+      const { invoiceNumber, invoiceDate, businessName, ssmNumber, taxNumber, address, contactName, contactEmail, contactPhone, buyerName, buyerAddress, dueDate, items } = req.body;
+
+      // Ensure items exist and is an array
+      if (!Array.isArray(items) || items.length === 0) {
+          return res.status(400).json({ message: 'Invoice must contain at least one item.' });
+      }
 
       // Check for duplicate invoice number
       const existingInvoice = await Invoice.findOne({ invoiceNumber });
@@ -183,7 +189,17 @@ app.post('/api/invoice', async (req, res) => {
 
       let totalAmount = 0;
       items.forEach(item => {
-          item.total = item.quantity * item.price;
+          const quantity = parseFloat(item.quantity) || 0;
+          const price = parseFloat(item.price) || 0;
+          const tax = parseFloat(item.tax) || 0;
+
+          // Ensure all required fields are present and valid
+          if (!item.itemCode || !item.description || quantity <= 0 || price <= 0) {
+              throw new Error('Invalid item data. Each item must have a code, description, positive quantity, and price.');
+          }
+
+          // Calculate total for each item (including tax)
+          item.total = (quantity * price) + ((tax / 100) * quantity * price);
           totalAmount += item.total;
       });
 
@@ -197,6 +213,9 @@ app.post('/api/invoice', async (req, res) => {
           contactName,
           contactEmail,
           contactPhone,
+          buyerName,
+          buyerAddress,
+          dueDate,
           items,
           totalAmount,
       });
@@ -204,17 +223,13 @@ app.post('/api/invoice', async (req, res) => {
       // Save invoice to MongoDB
       await newInvoice.save();
       res.status(201).json({ message: 'Invoice created successfully.', invoice: newInvoice });
-      // Redirect to success page with a message
-    res.render('invoice-success', { 
-        title: 'Invoice Created', 
-        message: 'Invoice created successfully!', 
-        invoiceNumber 
-    });
   } catch (error) {
       console.error('Error creating invoice:', error);
       res.status(500).json({ message: `Error creating invoice: ${error.message}` });
   }
 });
+
+
 
 // Route to download invoice as XML
 app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
@@ -232,23 +247,24 @@ app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
           .ele('Invoice')
           .ele('InvoiceNumber').txt(invoice.invoiceNumber).up()
           .ele('InvoiceDate').txt(invoice.invoiceDate).up()
+          .ele('DueDate').txt(invoice.dueDate).up()  // Add due date to XML
           .ele('BusinessName').txt(invoice.businessName).up()
           .ele('SSMNumber').txt(invoice.ssmNumber).up()
           .ele('TaxNumber').txt(invoice.taxNumber).up()
           .ele('Address').txt(invoice.address).up()
-          .ele('ContactInformation')
-              .ele('ContactName').txt(invoice.contactName).up()
-              .ele('ContactEmail').txt(invoice.contactEmail).up()
-              .ele('ContactPhone').txt(invoice.contactPhone).up()
+          .ele('BuyerInformation')
+              .ele('BuyerName').txt(invoice.buyerName).up()
+              .ele('BuyerAddress').txt(invoice.buyerAddress).up()
           .up()
           .ele('Items');
 
       invoice.items.forEach(item => {
           xml.ele('Item')
-              .ele('ItemName').txt(item.itemName).up()
+              .ele('ItemCode').txt(item.itemCode).up()
               .ele('Description').txt(item.description).up()
               .ele('Quantity').txt(item.quantity).up()
               .ele('Price').txt(item.price).up()
+              .ele('Tax').txt(item.tax).up()  // Add tax to XML
               .ele('Total').txt(item.total).up()
           .up();
       });
@@ -258,24 +274,13 @@ app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
 
       const xmlContent = xml.end({ prettyPrint: true });
 
-      
-
       // Save XML to file
-    //  const filePath = path.join(__dirname, 'invoices', `invoice_${invoiceNumber}.xml`);
-    //   fs.writeFileSync(filePath, xmlContent);
-    const invoiceDir = path.join(__dirname, 'invoices');  // Path to the invoices directory
-
-// Check if the directory exists, if not, create it
-if (!fs.existsSync(invoiceDir)) {
-    fs.mkdirSync(invoiceDir, { recursive: true });
-}
-
-// Now create the file path
-const filePath = path.join(invoiceDir, `invoice_${invoiceNumber}.xml`);
-
-// Write the XML content to the file
-fs.writeFileSync(filePath, xmlContent);
-      
+      const invoiceDir = path.join(__dirname, 'invoices');
+      if (!fs.existsSync(invoiceDir)) {
+          fs.mkdirSync(invoiceDir);
+      }
+      const filePath = path.join(invoiceDir, `invoice_${invoiceNumber}.xml`);
+      fs.writeFileSync(filePath, xmlContent);
 
       // Send the file for download
       res.download(filePath);

@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<Invoice>
+  <InvoiceNumber>in0099</InvoiceNumber>
+  <InvoiceDate>Mon Oct 21 2024 11:00:00 GMT+1100 (Australian Eastern Daylight Time)</InvoiceDate>
+  <DueDate>Thu Oct 31 2024 11:00:00 GMT+1100 (Australian Eastern Daylight Time)</DueDate>
+  <BusinessName>nkjl,</BusinessName>
+  <SSMNumber>111</SSMNumber>
+  <TaxNumber>111</TaxNumber>
+  <Address>ewfewf</Address>
+  <BuyerInformation>
+    <BuyerName>gfre</BuyerName>
+    <BuyerAddress>rdfgffreg</BuyerAddress>
+  </BuyerInformation>
+  <Items>
+    <Item>
+      <ItemCode>11</ItemCode>
+      <Description>iphone</Description>
+      <Quantity>1</Quantity>
+      <Price>2000</Price>
+      <Tax>3</Tax>
+      <Total>2060</Total>
+    </Item>
+  </Items>
+  <TotalAmount>2060</TotalAmount>
+</Invoice>
