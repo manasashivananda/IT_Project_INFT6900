@@ -4,24 +4,21 @@ document.addEventListener('DOMContentLoaded', () => {
     invoiceForm.addEventListener('submit', async (e) => {
         e.preventDefault();
 
+        // Enable all inputs temporarily to gather data for FormData
+        document.querySelectorAll('.item input').forEach(input => input.disabled = false);
+
         const formData = new FormData(invoiceForm);
         const data = {};
         let items = [];
 
         // Convert FormData to a JSON object
         formData.forEach((value, key) => {
-            console.log(`Processing Field Key: ${key}, Field Value: ${value}`); // Debug each field and value
-
-            if (key.startsWith('items')) {
+            if (key.includes('items')) {
                 const match = key.match(/items\[(\d+)\]\[(.+)\]/);
                 if (match) {
                     const index = match[1];
                     const field = match[2];
-
-                    // Initialize item index if it doesn't exist
                     if (!items[index]) items[index] = {};
-
-                    // Assign the field value to the appropriate item object
                     items[index][field] = value;
                 }
             } else {
@@ -29,21 +26,22 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Debugging - check parsed items array before validation
+        // Debugging - check parsed items array
         console.log("Parsed items array before filtering:", items);
 
         // Validate items: ensure we have at least one valid item
         items = items.filter(item => item.itemCode && item.description && parseFloat(item.quantity) > 0 && parseFloat(item.price) > 0);
-
-        console.log("Filtered items array after validation:", items);
 
         if (items.length === 0) {
             alert("Please add at least one item with valid details.");
             return;
         }
 
-        // Final data structure with items included
+        // Final data structure
         data.items = items;
+
+        // Reset item inputs back to their previous state after parsing
+        document.querySelectorAll('.item input').forEach(input => input.disabled = true);
 
         // Debug log to check the final data structure before sending to the server
         console.log("Data object before submission:", data);
@@ -71,10 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
             alert('An error occurred while creating the invoice.');
         }
     });
-
-    // Other functions like initializeItem, updateGrandTotal, disableExistingItems, etc.
-
-
 
     let itemCount = 0;
 
@@ -109,11 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         deleteButton.addEventListener('click', function () {
-            itemDiv.remove();
-            updateGrandTotal();
+            itemDiv.remove(); // Remove the item
+            updateGrandTotal(); // Update grand total after item deletion
         });
 
-        calculateTotal();
+        calculateTotal(); // Initial calculation to set total on page load
     }
 
     function updateGrandTotal() {
@@ -139,7 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('addItem').addEventListener('click', () => {
         itemCount++;
 
-        disableExistingItems();
+        disableExistingItems(); // Disable all previous items
 
         const newItemDiv = document.createElement('div');
         newItemDiv.className = 'item';
@@ -159,8 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
 
         document.getElementById('items').appendChild(newItemDiv);
-        initializeItem(newItemDiv);
-        newItemDiv.querySelectorAll('input').forEach(input => input.disabled = false);
+        initializeItem(newItemDiv); // Initialize event listeners and calculation on the new item
+        newItemDiv.querySelectorAll('input').forEach(input => input.disabled = false); // Make sure new item is editable right away
     });
 
     const firstItemDiv = document.querySelector('.item');
