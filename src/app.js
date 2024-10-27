@@ -176,6 +176,10 @@ app.get('/invoice', isAuthenticated, (req, res) => {
 
 // POST route for invoice creation
 
+
+// POST route for invoice creation
+
+
 // POST route for invoice creation
 app.post('/api/invoice', async (req, res) => {
   try {
@@ -289,7 +293,9 @@ app.post('/api/invoice', async (req, res) => {
 });
 
 
-// Route to download invoice as XML
+
+
+
 // Route to download invoice as XML
 app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
   try {
@@ -316,6 +322,7 @@ app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
       res.status(500).json({ message: 'Error generating XML file.' });
   }
 });
+
 
 
   // Start the server

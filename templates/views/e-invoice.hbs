@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Create E-Invoice</title>
-    <link rel="stylesheet" href="/Css/styles.css">
+  
     <link rel="stylesheet" href="/Css/invoice.css">
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
@@ -74,11 +74,13 @@
             <div class="item">
                 <div class="item-fields">
                     <input type="text" name="items[0][itemCode]" placeholder="Item Code" required>
-                    <input type="text" name="items[0][description]" placeholder="Description" required> <!-- Changed to description -->
-                    <input type="number" name="items[0][quantity]" placeholder="Quantity" required>
-                    <input type="number" name="items[0][price]" placeholder="Unit Price" required>
-                    <input type="number" name="items[0][tax]" placeholder="Tax (%)" required>
-                    <input type="text" name="items[0][total]" placeholder="Total" readonly>
+<input type="text" name="items[0][description]" placeholder="Description" required>
+<input type="number" name="items[0][quantity]" placeholder="Quantity" required>
+<input type="number" name="items[0][price]" placeholder="Unit Price" required>
+<input type="number" name="items[0][tax]" placeholder="Tax (%)" required>
+<input type="text" name="items[0][total]" placeholder="Total" readonly>
+
+                  
                 </div>
                 <div class="item-buttons">
                     <button type="button" class="edit-btn" data-action="save"><i class="fas fa-save"></i></button>

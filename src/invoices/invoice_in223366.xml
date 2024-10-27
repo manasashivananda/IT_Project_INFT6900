@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<Invoice>
+  <InvoiceNumber>in223366</InvoiceNumber>
+  <InvoiceDate>2024-10-27</InvoiceDate>
+  <BusinessName>dcfxd</BusinessName>
+  <SSMNumber>33</SSMNumber>
+  <TaxNumber>33</TaxNumber>
+  <Address>3deasefc</Address>
+  <BuyerName>deffc</BuyerName>
+  <BuyerAddress>aedrc</BuyerAddress>
+  <DueDate>2024-11-27</DueDate>
+  <Items>
+    <Item>
+      <ItemCode>1</ItemCode>
+      <Description>iphone</Description>
+      <Quantity>1</Quantity>
+      <UnitPrice>20</UnitPrice>
+      <Tax>2</Tax>
+      <Total>20.4</Total>
+    </Item>
+  </Items>
+  <TotalAmount>20.4</TotalAmount>
+</Invoice>
