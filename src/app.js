@@ -323,6 +323,18 @@ app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
   }
 });
 
+// Endpoint to get a list of invoices for selection
+// Define the `/api/invoices` route
+app.get('/api/invoices', async (req, res) => {
+  try {
+    // Fetch only the required fields
+    const invoices = await Invoice.find({}, 'invoiceNumber buyerName totalAmount');
+    res.json(invoices);
+  } catch (error) {
+    console.error('Error fetching invoices:', error);
+    res.status(500).json({ message: 'Error fetching invoices' });
+  }
+});
 
 
   // Start the server

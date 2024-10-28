@@ -1,26 +1,18 @@
 $(document).ready(function() {
-  // Function to refresh statistics (example)
+  // Function to refresh statistics
   $('#refreshStats').on('click', function() {
-      // This is just a placeholder for an actual refresh stats API call
       alert('Statistics refreshed!'); 
-      // You can add actual logic here for refreshing statistics, such as making an AJAX call to an endpoint.
   });
 
   // Function to search invoices
   $('#search-input').on('input', function() {
       const query = $(this).val();
-      // Placeholder alert for search functionality
       alert('Searching invoices for: ' + query); 
-      // You can implement an API call here for invoice search
   });
 
   // Initialize the recent activities section (if you need any custom logic here)
   function loadRecentActivities() {
-      // If using AJAX to fetch recent activities dynamically, implement it here.
-      // For example:
-      // $.get('/api/recent-activities', function(data) {
-      //   // Render the recent activities dynamically
-      // });
+      // Example for loading recent activities dynamically
   }
 
   // Function to initialize Chart.js with dynamic data passed from the server
@@ -29,10 +21,10 @@ $(document).ready(function() {
       const invoiceChart = new Chart(ctx, {
         type: 'bar',
         data: {
-          labels: chartLabels,  // Use dynamic labels from the server
+          labels: chartLabels,
           datasets: [{
             label: 'Invoices created',
-            data: chartData,    // Use dynamic data from the server
+            data: chartData,
             backgroundColor: '#007bff',
             borderColor: '#007bff',
             borderWidth: 1
@@ -48,14 +40,53 @@ $(document).ready(function() {
       });
   }
 
-  // Assuming chartLabels and chartData are available globally or passed to this script from the server-side template
+  // Initialize the chart if data is available
   const chartLabels = window.chartLabels || [];
   const chartData = window.chartData || [];
-
-  // Initialize the chart with data if it's available
   if (chartLabels.length && chartData.length) {
       initInvoiceChart(chartLabels, chartData);
   }
+
+  // Load and display list of invoices for download
+  async function loadInvoices() {
+    try {
+      const response = await fetch('/api/invoices');
+      const invoices = await response.json();
+
+      const invoiceSelect = $('#invoiceSelect');
+      invoiceSelect.empty(); // Clear existing options
+      invoiceSelect.append('<option value="">Select Invoice to Download</option>');
+
+      invoices.forEach(invoice => {
+        const option = $('<option>', {
+          value: invoice.invoiceNumber,
+          text: `Invoice #${invoice.invoiceNumber} - ${invoice.buyerName} - ${invoice.totalAmount} MYR`
+        });
+        invoiceSelect.append(option);
+      });
+    } catch (error) {
+      console.error('Error loading invoices:', error);
+    }
+  }
+
+  // Trigger invoice download
+  $('#downloadInvoiceButton').on('click', function() {
+    const selectedInvoiceNumber = $('#invoiceSelect').val();
+
+    if (!selectedInvoiceNumber) {
+      alert('Please select an invoice to download.');
+      return;
+    }
+
+    // Redirect to download URL
+    window.location.href = `/download-invoice-xml/${selectedInvoiceNumber}`;
+
+    // Reset the dropdown selection to default after download
+    $('#invoiceSelect').val('');
+  });
+
+  // Load invoices when the page loads
+  loadInvoices();
 
   // Ensure that animations are triggered after the page is fully loaded
   $('.dashboard-content, .search-bar, .charts').addClass('loaded');
