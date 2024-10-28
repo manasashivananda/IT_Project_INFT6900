@@ -11,6 +11,9 @@ const express = require('express');
   const session = require("express-session"); // Import express-session
   require("dotenv").config();
   const Invoice = require('./models/invoice');
+  const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+ 
+
 
   const app = express();
   const PORT = process.env.PORT || 3000;
@@ -150,23 +153,48 @@ function isAuthenticated(req, res, next) {
 }
 
   // Route to render the dashboard page
- // Route to render the dashboard page
-app.get("/dashboard", isAuthenticated, (req, res) => {
-  const user = req.session.user;
-  const activities = req.session.activities || []; // Get activities from session
-  res.render("dashboard", {
-    title: "Dashboard",
-    user: {
-      ...user,
-      activities, // Pass activities to the template
-    },
-    statistics: {
-      totalRegistrations: 100,
-      pendingInvoices: 5,
-      completedInvoices: 95,
-    },
-  });
-});
+
+
+
+ app.get("/dashboard", isAuthenticated, async (req, res) => {
+   try {
+     // Fetch statistics data from the API
+     const statisticsResponse = await fetch('http://localhost:3000/api/statistics');
+     if (!statisticsResponse.ok) {
+       throw new Error(`Failed to fetch statistics: ${statisticsResponse.statusText}`);
+     }
+ 
+     const statistics = await statisticsResponse.json();
+ 
+     // Render the dashboard with the retrieved statistics
+     res.render("dashboard", {
+       title: "Dashboard",
+       user: req.session.user,
+       statistics: {
+         totalInvoicesCreated: statistics.totalInvoices || 0,
+         invoicesDueThisMonth: statistics.dueThisMonth || 0,
+         averageInvoiceAmount: statistics.averageInvoiceAmount || "0.00",
+         totalClients: statistics.totalClients || 0,
+       },
+       activities: req.session.activities || []
+     });
+   } catch (error) {
+     console.error("Error fetching statistics:", error.message);
+ 
+     // Render the dashboard with default values if fetching statistics fails
+     res.render("dashboard", {
+       title: "Dashboard",
+       user: req.session.user,
+       statistics: {
+         totalInvoicesCreated: 0,
+         invoicesDueThisMonth: 0,
+         averageInvoiceAmount: "0.00",
+         totalClients: 0,
+       }
+     });
+   }
+ });
+ 
 
 // Route to render e-invoice form
 app.get('/invoice', isAuthenticated, (req, res) => {
@@ -336,6 +364,70 @@ app.get('/api/invoices', async (req, res) => {
   }
 });
 
+app.get('/api/statistics', async (req, res) => {
+  try {
+      const totalInvoices = await Invoice.countDocuments();
+      const outstandingInvoices = await Invoice.countDocuments({ dueDate: { $lt: new Date() }, status: 'unpaid' });
+      const totalRevenue = await Invoice.aggregate([{ $group: { _id: null, total: { $sum: "$totalAmount" } } }]);
+      const dueThisMonth = await Invoice.countDocuments({
+          dueDate: { 
+              $gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+              $lt: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 1)
+          }
+      });
+      const averageInvoiceAmount = totalRevenue[0] ? totalRevenue[0].total / totalInvoices : 0;
+      
+      // Count unique clients based on buyerName
+      const totalClients = await Invoice.distinct('buyerName').then(names => names.length);
+
+      res.json({
+          totalInvoices,
+          outstandingInvoices,
+          totalRevenue: totalRevenue[0] ? totalRevenue[0].total : 0,
+          dueThisMonth,
+          averageInvoiceAmount: averageInvoiceAmount.toFixed(2),
+          totalClients
+      });
+  } catch (error) {
+      console.error("Error fetching statistics:", error);
+      res.status(500).json({ message: "Error fetching statistics" });
+  }
+});
+
+
+
+app.get('/api/performance-data', async (req, res) => {
+    try {
+        // Monthly invoices and revenue
+        const currentYear = new Date().getFullYear();
+        const monthlyInvoices = Array(12).fill(0);
+        const monthlyRevenue = Array(12).fill(0);
+
+        const invoices = await Invoice.find({
+            invoiceDate: { $gte: new Date(currentYear, 0, 1), $lt: new Date(currentYear + 1, 0, 1) }
+        });
+
+        invoices.forEach(invoice => {
+            const month = new Date(invoice.invoiceDate).getMonth();
+            monthlyInvoices[month]++;
+            monthlyRevenue[month] += invoice.totalAmount;
+        });
+
+        // Paid vs Unpaid Invoices
+        const paidInvoices = await Invoice.countDocuments({ status: 'paid' });
+        const unpaidInvoices = await Invoice.countDocuments({ status: 'unpaid' });
+
+        // Send the data as JSON response
+        res.json({
+            monthlyLabels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+            monthlyInvoices,
+            monthlyRevenue
+        });
+    } catch (error) {
+        console.error('Error fetching performance data:', error);
+        res.status(500).json({ message: 'Error fetching performance data' });
+    }
+});
 
   // Start the server
 app.listen(PORT, () => {

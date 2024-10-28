@@ -16,24 +16,25 @@
   <body>
     <!-- Header Section -->
     <header class="main-header">
-      <div class="user-info">
+    <div class="user-info">
         <h1>Welcome, {{user.name}}</h1>
-        <p>Business Name: {{user.businessName}}</p>
-        <p>Email: {{user.email}}</p>
-        <p>Contact Phone: {{user.contactPhone}}</p>
-      </div>
-      <div class="quick-access">
+        <p><i class="fas fa-building icon-spacing"></i> Business Name: {{user.businessName}}</p>
+        <p><i class="fas fa-envelope icon-spacing"></i> Email: {{user.email}}</p>
+        <p><i class="fas fa-phone icon-spacing"></i> Contact Phone: {{user.contactPhone}}</p>
+    </div>
+    <div class="quick-access">
         <button id="homeBtn" onclick="location.href='/'">
-          <i class="fas fa-home"></i> Home
+            <i class="fas fa-home"></i> Home
         </button>
         <button id="generateReportBtn">
-          <i class="fas fa-file-alt"></i> Generate Report
+            <i class="fas fa-file-alt"></i> Generate Report
         </button>
         <button id="accountBtn">
-          <i class="fas fa-user-circle"></i> Account
+            <i class="fas fa-user-circle"></i> Account
         </button>
-      </div>
-    </header>
+    </div>
+</header>
+
 
     <!-- Dashboard Content -->
     <div class="dashboard-columns">
@@ -54,15 +55,17 @@
       </div>
 
       <!-- Center Column (Statistics) -->
-      <div class="statistics">
-        <h2><i class="fas fa-chart-bar"></i> Statistics</h2>
-        <ul>
-          <li>Total Registrations: {{statistics.totalRegistrations}}</li>
-          <li>Pending Invoices: {{statistics.pendingInvoices}}</li>
-          <li>Completed Invoices: {{statistics.completedInvoices}}</li>
-        </ul>
-      </div>
+<div class="statistics">
+  <h2><i class="fas fa-chart-bar"></i> Statistics</h2>
+<ul>
+  <li><i class="fas fa-file-invoice"></i> Total Invoices Created: <span id="totalInvoicesCreated">{{statistics.totalInvoicesCreated}}</span></li>
+  <li><i class="fas fa-calendar-alt"></i> Invoices Due This Month: <span id="invoicesDueThisMonth">{{statistics.invoicesDueThisMonth}}</span></li>
+  <li><i class="fas fa-coins"></i> Average Invoice Amount: <span id="averageInvoiceAmount">{{statistics.averageInvoiceAmount}} MYR</span></li>
+  <li><i class="fas fa-users"></i> Total Clients: <span id="totalClients">{{statistics.totalClients}}</span></li>
+</ul>
 
+
+</div>
       <!-- Right Column (Actions) -->
       <div class="actions">
         <h2><i class="fas fa-tasks"></i> Actions</h2>
@@ -91,38 +94,35 @@
     </div>
 
     <!-- Placeholder for charts -->
-    <div class="charts">
-      <h2><i class="fas fa-chart-line"></i> Performance Analytics</h2>
-      <canvas id="invoiceChart"></canvas>
+
+<div class="performance-analytics">
+  <h2><i class="fas fa-chart-line"></i> Performance Analytics</h2>
+  
+  <div class="charts-container">
+    <!-- Monthly Invoices Created Chart -->
+    <div class="chart-item">
+      <canvas id="monthlyInvoicesChart"></canvas>
+      <h3><i class="fas fa-file-invoice"></i> Monthly Invoices Created</h3>
     </div>
 
-    <script src="/js/dashboard.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Monthly Revenue Trends Chart -->
+    <div class="chart-item">
+      <canvas id="revenueTrendChart"></canvas>
+      <h3><i class="fas fa-dollar-sign"></i> Monthly Revenue Trends</h3>
+    </div>
+  </div>
+</div>
+
+
+
+
+    
     <script>
-      // Placeholder Chart.js example for invoice data
-      const ctx = document.getElementById('invoiceChart').getContext('2d');
-      const invoiceChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['January', 'February', 'March', 'April', 'May', 'June'],
-          datasets: [
-            {
-              label: 'Invoices created',
-              data: [12, 19, 3, 5, 2, 3],
-              backgroundColor: '#007bff',
-              borderColor: '#007bff',
-              borderWidth: 1
-            }
-          ]
-        },
-        options: {
-          scales: {
-            y: {
-              beginAtZero: true
-            }
-          }
-        }
-      });
-    </script>
+    document.getElementById('refreshStats').addEventListener('click', function() {
+        alert('Statistics refreshed!');
+    });
+</script>
+       <script src="/js/dashboard.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </body>
 </html>

@@ -7,14 +7,19 @@ body, html {
 }
 
 /* Full-width Header with Centered Welcome Section */
+
 .main-header {
-  background-color: #2f3e46;
+  background-color: #1d6f9b;
   color: white;
   padding: 30px;
   display: flex;
-  justify-content: center; /* Centers the user-info content */
+  justify-content: center;
   align-items: center;
   position: relative;
+}
+
+.icon-spacing {
+  margin-right: 4px; /* Adjust the spacing as needed */
 }
 
 .user-info {
@@ -187,4 +192,75 @@ body, html {
 .download-btn:hover {
   background-color: #0056b3;
 }
+
+.statistics {
+  flex: 1;
+  background-color: #ffffff;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.statistics h2 {
+  font-size: 20px;
+  color: #2f3e46;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.statistics ul {
+  list-style: none;
+  padding: 0;
+}
+
+.statistics ul li {
+  font-size: 16px;
+  color: #4a4a4a;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.statistics ul li:last-child {
+  border-bottom: none;
+}
+
+ul li i {
+  color: #151618; /* Customize icon color */
+  margin-right: 8px; /* Adds space between icon and text */
+}
+ul li {
+  font-size: 16px; /* Adjust font size */
+  line-height: 1.6; /* Adds spacing between list items */
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 20px auto;
+}
+
+.performance-analytics .charts-container {
+  display: flex;
+  justify-content: space-around;
+  gap: 20px; /* Add space between charts */
+  padding: 20px 0;
+}
+
+.performance-analytics {
+  text-align: center;
+}
+
+.chart-item {
+  flex: 1; /* Each chart takes equal space */
+  max-width: 500px; /* Optional: limit max width */
+  text-align: center;
+  background-color: #ffffff;
+}
+
+.chart-item canvas {
+  width: 100% !important;
+  height: 300px !important; /* Adjust height as needed */
+}
+
 
