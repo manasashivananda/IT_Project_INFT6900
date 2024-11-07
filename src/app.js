@@ -204,6 +204,121 @@ app.get('/invoice', isAuthenticated, (req, res) => {
 
 
 // POST route for invoice creation
+// app.post('/api/invoice', async (req, res) => {
+//   try {
+//       const {
+//           invoiceNumber,
+//           invoiceDate,
+//           dueDate,
+//           currencyCode,
+//           businessName,
+//           ssmNumber,
+//           taxNumber,
+//           supplierAddress,
+//           buyerName,
+//           buyerAddress,
+//           additionalFee,
+//           discount,
+//           items,
+//           taxType, // Ensure taxType is included
+//       } = req.body;
+
+//       // Validate required fields
+//       if (!invoiceNumber || !invoiceDate || !dueDate || !currencyCode || !businessName || 
+//           !ssmNumber || !taxNumber || !supplierAddress || !buyerName || !buyerAddress || 
+//           !Array.isArray(items) || items.length === 0 || !taxType) {
+//           return res.status(400).json({ message: 'All fields are required.' });
+//       }
+
+//       // Check for duplicate invoice number
+//       const existingInvoice = await Invoice.findOne({ invoiceNumber });
+//       if (existingInvoice) {
+//           return res.status(400).json({ message: 'Invoice number already exists.' });
+         
+//       }
+
+//       let totalAmount = 0;
+//       let totalTax = 0;
+
+//       items.forEach(item => {
+//           const quantity = parseFloat(item.quantity) || 0;
+//           const price = parseFloat(item.price.priceAmount) || 0;
+
+//           // Ensure all required fields are present and valid
+//           if (!item.itemCode || !item.description || quantity <= 0 || price <= 0) {
+//               throw new Error('Invalid item data. Each item must have a code, description, positive quantity, and price.');
+//           }
+
+//           item.lineTotalAmount = quantity * price; // Calculate line total
+//           totalAmount += item.lineTotalAmount;
+
+//           // Calculate total tax if taxable
+//           if (item.isTaxable) {
+//               totalTax += item.tax.taxAmount; // Assuming taxAmount is already calculated
+//           }
+//       });
+
+//       // Include additional fees and discounts
+//       totalAmount += additionalFee - discount;
+
+//       const newInvoice = new Invoice({
+//           invoiceNumber,
+//           issueDate: new Date(invoiceDate),
+//           dueDate: new Date(dueDate),
+//           currencyCode,
+//           businessName,
+//           ssmNumber,
+//           taxNumber,
+//           supplierAddress,
+//           buyerName,
+//           buyerAddress,
+//           taxType,
+//           items,
+//           additionalFee,
+//           discount,
+//           totalAmount,
+//           taxTotal: totalTax,
+//           grandTotal: totalAmount,
+//           payableAmount: totalAmount,
+//       });
+
+//       // Save invoice to MongoDB
+//       await newInvoice.save();
+
+//       // Generate XML in UBL format
+//       const xmlContent = generateUBLXML({
+//           invoiceNumber,
+//           invoiceDate,
+//           currency: currencyCode,
+//           totalAmount,
+//           taxAmount: totalTax,
+//           items
+//       });
+
+//       // Define file path for saving XML
+//       const invoiceDir = path.join(__dirname, 'invoices');
+//       if (!fs.existsSync(invoiceDir)) {
+//           fs.mkdirSync(invoiceDir);
+//       }
+//       const filePath = path.join(invoiceDir, `invoice_${invoiceNumber}.xml`);
+
+//       // Write the XML content to a file
+//       fs.writeFileSync(filePath, xmlContent);
+
+//       // Send the response
+//       res.status(201).json({
+//           message: 'Invoice created successfully.',
+//           invoice: newInvoice,
+//           downloadLink: `/download-invoice-xml/${invoiceNumber}`
+//       });
+
+//   } catch (error) {
+//       console.error('Error creating invoice:', error);
+//       res.status(500).json({ message: `Error creating invoice: ${error.message}` });
+     
+//   }
+// });
+
 app.post('/api/invoice', async (req, res) => {
   try {
       const {
@@ -318,11 +433,6 @@ app.post('/api/invoice', async (req, res) => {
 });
 
 
-
-
-
-
-
 // Route to download invoice as XML
 app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
   try {
@@ -428,7 +538,22 @@ app.get('/api/performance-data', async (req, res) => {
     }
 });
 
+// New route for successful invoice creation
+app.get('/invoice-success', (req, res) => {
+  const invoiceNumber = req.query.invoiceNumber; // Get invoice number from query
+  const message = "Invoice created successfully."; // Success message
+  res.render('invoice-success', { title: "Success", message, invoiceNumber }); // Render the success page with title, message, and invoice number
+});
+
+
+// Route for error page
+app.get('/invoice-error', (req, res) => {
+  const errorMessage = req.query.message; // Get error message from query
+  res.render('invoice-error', { title: "Error", message: errorMessage }); // Render the error page
+});
+
   // Start the server
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+

@@ -1,0 +1,45 @@
+/* General Body Styling */
+body {
+    font-family: "Roboto", sans-serif;
+    background: linear-gradient(135deg, #6dd5fa, #ffffff);
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    text-align: center; /* Center align text */
+}
+
+/* Success Message Styling */
+.message-container {
+    padding: 40px; /* Add padding around the text */
+}
+
+/* Button Container Styling */
+.button-container {
+    margin-top: 20px;
+}
+
+.button-container button {
+    background-color: #007bff;
+    color: white;
+    padding: 12px 25px; /* Increase padding for better button size */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 5px; /* Add space between buttons */
+    transition: background-color 0.3s;
+}
+
+.button-container button:hover {
+    background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Font Awesome Icon Adjustment */
+h1 i  {
+    color: #28a745; /* Success color */
+    margin-right: 10px; /* Space between icon and text */
+}
+

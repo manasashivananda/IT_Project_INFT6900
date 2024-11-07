@@ -331,6 +331,10 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
         const isTaxable = item.querySelector('input[name="isTaxable"]').checked;
         const taxAmount = isTaxable ? parseFloat(item.querySelector('input[name="taxAmount"]').value) || 0 : 0;
 
+         // Get the tax type code from the dropdown or input
+         const taxTypeCode = isTaxable ? document.getElementById("taxType").value : "No Tax"; // Define taxTypeCode here
+
+
         // Calculate line total amount
         const lineTotalAmount = (quantity * priceAmount) + (isTaxable ? (taxAmount / 100 * (quantity * priceAmount)) : 0);
 
@@ -347,7 +351,7 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
                 },
                 isTaxable,
                 tax: {
-                    taxTypeCode: isTaxable ? "GST" : null,
+                    taxTypeCode: taxTypeCode,
                     taxAmount,
                     taxPercent: isTaxable ? (taxAmount / lineTotalAmount) * 100 : 0
                 },
@@ -382,6 +386,8 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
         taxType // Include taxType here
     };
 
+    localStorage.setItem('invoiceData', JSON.stringify(formData));
+
     // Log the formData for debugging
     console.log("Form Data:", JSON.stringify(formData, null, 2));
 
@@ -401,8 +407,20 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
         return response.json();
     })
     .then(data => {
-        console.log(data);
-        // Handle success or error accordingly
+        console.log("Response Data:", data); // Log the entire response data
+        if (data.invoice && data.invoice.invoiceNumber) {
+            window.location.href = `/invoice-success?invoiceNumber=${data.invoice.invoiceNumber}`;
+        } else {
+            console.error("Invoice number not found in response.");
+        }
     })
-    .catch(error => console.error('Error:', error));
+    .catch(error => {
+        console.error('Error:', error.message); // Log the error message
+       // window.location.href = `/invoice-error?message=${encodeURIComponent(error.message)}`;
+       alert(error.message);
+    });
 });
+
+
+
+        
