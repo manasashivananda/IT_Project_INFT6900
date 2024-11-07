@@ -396,8 +396,15 @@ app.post('/api/invoice', async (req, res) => {
           payableAmount: totalAmount,
       });
 
-      // Save invoice to MongoDB
-      await newInvoice.save();
+      // // Save invoice to MongoDB
+      // await newInvoice.save();
+      try {
+        // Save invoice to MongoDB
+        await newInvoice.save();
+        console.log("Invoice saved successfully!");
+    } catch (error) {
+        console.error("Error saving invoice:", error);
+    }
 
       // Generate XML in UBL format
       const xmlContent = generateUBLXML({
@@ -504,39 +511,37 @@ app.get('/api/statistics', async (req, res) => {
 });
 
 
-
 app.get('/api/performance-data', async (req, res) => {
-    try {
-        // Monthly invoices and revenue
-        const currentYear = new Date().getFullYear();
-        const monthlyInvoices = Array(12).fill(0);
-        const monthlyRevenue = Array(12).fill(0);
+  try {
+      const currentYear = new Date().getFullYear();
+      const monthlyInvoices = Array(12).fill(0);
+      const monthlyRevenue = Array(12).fill(0);
 
-        const invoices = await Invoice.find({
-            invoiceDate: { $gte: new Date(currentYear, 0, 1), $lt: new Date(currentYear + 1, 0, 1) }
-        });
+      const invoices = await Invoice.find({
+          invoiceDate: { $gte: new Date(currentYear, 0, 1), $lt: new Date(currentYear + 1, 0, 1) }
+      });
 
-        invoices.forEach(invoice => {
-            const month = new Date(invoice.invoiceDate).getMonth();
-            monthlyInvoices[month]++;
-            monthlyRevenue[month] += invoice.totalAmount;
-        });
+      invoices.forEach(invoice => {
+          const month = new Date(invoice.invoiceDate).getMonth();
+          monthlyInvoices[month]++;
+          monthlyRevenue[month] += invoice.totalAmount || 0; // Ensure totalAmount is defined
+      });
 
-        // Paid vs Unpaid Invoices
-        const paidInvoices = await Invoice.countDocuments({ status: 'paid' });
-        const unpaidInvoices = await Invoice.countDocuments({ status: 'unpaid' });
-
-        // Send the data as JSON response
-        res.json({
-            monthlyLabels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-            monthlyInvoices,
-            monthlyRevenue
-        });
-    } catch (error) {
-        console.error('Error fetching performance data:', error);
-        res.status(500).json({ message: 'Error fetching performance data' });
-    }
+      // Return the data
+      res.json({
+          monthlyLabels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          monthlyInvoices,
+          monthlyRevenue
+      });
+  } catch (error) {
+      console.error('Error fetching performance data:', error);
+      res.status(500).json({ message: 'Error fetching performance data' });
+  }
 });
+
+
+
+
 
 // New route for successful invoice creation
 app.get('/invoice-success', (req, res) => {
