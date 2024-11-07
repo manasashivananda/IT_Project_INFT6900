@@ -12,6 +12,7 @@ const express = require('express');
   require("dotenv").config();
   const Invoice = require('./models/invoice');
   const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
+  const generateUBLXML = require('./util/ublInvoiceGenerator');
  
 
 
@@ -203,19 +204,30 @@ app.get('/invoice', isAuthenticated, (req, res) => {
 
 
 // POST route for invoice creation
-
-
-// POST route for invoice creation
-
-
-// POST route for invoice creation
 app.post('/api/invoice', async (req, res) => {
   try {
-      const { invoiceNumber, invoiceDate, businessName, ssmNumber, taxNumber, address, contactName, contactEmail, contactPhone, buyerName, buyerAddress, dueDate, items } = req.body;
+      const {
+          invoiceNumber,
+          invoiceDate,
+          dueDate,
+          currencyCode,
+          businessName,
+          ssmNumber,
+          taxNumber,
+          supplierAddress,
+          buyerName,
+          buyerAddress,
+          additionalFee,
+          discount,
+          items,
+          taxType, // Ensure taxType is included
+      } = req.body;
 
-      // Ensure items exist and is an array
-      if (!Array.isArray(items) || items.length === 0) {
-          return res.status(400).json({ message: 'Invoice must contain at least one item.' });
+      // Validate required fields
+      if (!invoiceNumber || !invoiceDate || !dueDate || !currencyCode || !businessName || 
+          !ssmNumber || !taxNumber || !supplierAddress || !buyerName || !buyerAddress || 
+          !Array.isArray(items) || items.length === 0 || !taxType) {
+          return res.status(400).json({ message: 'All fields are required.' });
       }
 
       // Check for duplicate invoice number
@@ -225,77 +237,62 @@ app.post('/api/invoice', async (req, res) => {
       }
 
       let totalAmount = 0;
+      let totalTax = 0;
+
       items.forEach(item => {
           const quantity = parseFloat(item.quantity) || 0;
-          const price = parseFloat(item.price) || 0;
-          const tax = parseFloat(item.tax) || 0;
+          const price = parseFloat(item.price.priceAmount) || 0;
 
           // Ensure all required fields are present and valid
           if (!item.itemCode || !item.description || quantity <= 0 || price <= 0) {
               throw new Error('Invalid item data. Each item must have a code, description, positive quantity, and price.');
           }
 
-          // Calculate total for each item (including tax)
-          item.total = (quantity * price) + ((tax / 100) * quantity * price);
-          totalAmount += item.total;
+          item.lineTotalAmount = quantity * price; // Calculate line total
+          totalAmount += item.lineTotalAmount;
+
+          // Calculate total tax if taxable
+          if (item.isTaxable) {
+              totalTax += item.tax.taxAmount; // Assuming taxAmount is already calculated
+          }
       });
+
+      // Include additional fees and discounts
+      totalAmount += additionalFee - discount;
 
       const newInvoice = new Invoice({
           invoiceNumber,
-          invoiceDate,
+          issueDate: new Date(invoiceDate),
+          dueDate: new Date(dueDate),
+          currencyCode,
           businessName,
           ssmNumber,
           taxNumber,
-          address,
-          contactName,
-          contactEmail,
-          contactPhone,
+          supplierAddress,
           buyerName,
           buyerAddress,
-          dueDate,
+          taxType,
           items,
+          additionalFee,
+          discount,
           totalAmount,
+          taxTotal: totalTax,
+          grandTotal: totalAmount,
+          payableAmount: totalAmount,
       });
 
       // Save invoice to MongoDB
       await newInvoice.save();
 
-      // Add this activity to the session for recent activities
-      const activityMessage = `Invoice #${invoiceNumber} created on ${invoiceDate}`;
-      if (!req.session.activities) {
-          req.session.activities = [];
-      }
-      req.session.activities.push(activityMessage);
-
-      // Generate XML
-      const xml = create({ version: '1.0' })
-          .ele('Invoice')
-          .ele('InvoiceNumber').txt(invoiceNumber).up()
-          .ele('InvoiceDate').txt(invoiceDate).up()
-          .ele('BusinessName').txt(businessName).up()
-          .ele('SSMNumber').txt(ssmNumber).up()
-          .ele('TaxNumber').txt(taxNumber).up()
-          .ele('Address').txt(address).up()
-          .ele('BuyerName').txt(buyerName).up()
-          .ele('BuyerAddress').txt(buyerAddress).up()
-          .ele('DueDate').txt(dueDate).up()
-          .ele('Items');
-
-      items.forEach(item => {
-          xml.ele('Item')
-              .ele('ItemCode').txt(item.itemCode).up()
-              .ele('Description').txt(item.description).up()
-              .ele('Quantity').txt(item.quantity).up()
-              .ele('UnitPrice').txt(item.price).up()
-              .ele('Tax').txt(item.tax).up()
-              .ele('Total').txt(item.total).up()
-          .up();
+      // Generate XML in UBL format
+      const xmlContent = generateUBLXML({
+          invoiceNumber,
+          invoiceDate,
+          currency: currencyCode,
+          totalAmount,
+          taxAmount: totalTax,
+          items
       });
-
-      xml.up()
-          .ele('TotalAmount').txt(totalAmount).up();
-
-      const xmlContent = xml.end({ prettyPrint: true });
 
       // Define file path for saving XML
       const invoiceDir = path.join(__dirname, 'invoices');
@@ -307,11 +304,11 @@ app.post('/api/invoice', async (req, res) => {
       // Write the XML content to a file
       fs.writeFileSync(filePath, xmlContent);
 
-      // Send the file download response
+      // Send the response
       res.status(201).json({
-        message: 'Invoice created successfully.',
-        invoice: newInvoice,
-        downloadLink: `/download-invoice-xml/${invoiceNumber}`
+          message: 'Invoice created successfully.',
+          invoice: newInvoice,
+          downloadLink: `/download-invoice-xml/${invoiceNumber}`
       });
 
   } catch (error) {
@@ -319,6 +316,8 @@ app.post('/api/invoice', async (req, res) => {
       res.status(500).json({ message: `Error creating invoice: ${error.message}` });
   }
 });
+
+
 
 
 

@@ -15,12 +15,14 @@
 
     <!-- Back to Dashboard Button -->
     <button type="button" class="back-btn" onclick="location.href='/dashboard'">
-        <i class="fas fa-arrow-left"></i>Dashboard
+        <i class="fas fa-arrow-left"></i> Dashboard
     </button>
 
     <h1><i class="fas fa-file-invoice"></i> Create E-Invoice</h1>
 
-    <form id="invoiceForm" method="POST" action="/create-invoice">
+   
+
+<form id="invoiceForm" method="POST" action="/api/invoice">
         <!-- Invoice Header Section -->
         <div class="form-group">
             <input type="text" id="invoiceNumber" name="invoiceNumber" placeholder=" " required>
@@ -37,6 +39,18 @@
             <label for="dueDate">Due Date</label>
         </div>
 
+        <!-- Currency Code Selection -->
+       <!-- Currency Code Dropdown with Placeholder Option -->
+<select id="currencyCode" name="currencyCode" onchange="showCustomCurrencyField(this)">
+    <option value="" disabled selected>Select Currency</option> <!-- Placeholder option -->
+    <option value="USD">USD - US Dollar</option>
+    <option value="EUR">EUR - Euro</option>
+    <option value="MYR">MYR - Malaysian Ringgit</option>
+    <option value="Other">Other</option>
+</select>
+<!-- Custom Currency Code Field, initially hidden -->
+<input type="text" id="customCurrencyCode" name="customCurrencyCode" placeholder="Custom Currency Code" style="display: none;">
+
         <!-- Supplier Information -->
         <h2>Supplier Information</h2>
         <div class="form-group">
@@ -49,11 +63,11 @@
         </div>
         <div class="form-group">
             <input type="text" id="taxNumber" name="taxNumber" placeholder=" " required>
-            <label for="taxNumber">Tax Number</label>
+            <label for="taxNumber">Supplier Tax Number</label>
         </div>
         <div class="form-group">
-            <textarea id="address" name="address" placeholder=" " required></textarea>
-            <label for="address">Address</label>
+            <textarea id="supplierAddress" name="supplierAddress" placeholder=" " required></textarea>
+            <label for="supplierAddress">Supplier Address</label>
         </div>
 
         <!-- Buyer Information -->
@@ -66,54 +80,123 @@
             <textarea id="buyerAddress" name="buyerAddress" placeholder=" " required></textarea>
             <label for="buyerAddress">Buyer Address</label>
         </div>
+        
+        <!-- Tax Type Selection -->
+          <h2>Tax Information</h2>
+          <div class="form-group">
+    <label for="taxType">Tax Type</label>
+    <select id="taxType" name="taxType" onchange="showCustomTaxField(this)">
+        <option value="" disabled selected>Select Tax Type</option> <!-- Placeholder option -->
+        <option value="VAT">VAT</option>
+        <option value="GST">GST</option>
+        <option value="Sales Tax">Sales Tax</option>
+        <option value="Other">Other</option>
+    </select>
+</div>
+
+<!-- Custom Tax Type Field, initially hidden -->
+<div class="form-group custom-tax-type-container" id="customTaxTypeContainer" style="display: none;">
+    <input type="text" id="customTaxType" name="customTaxType" placeholder="Custom Tax Type">
+</div>
+
+<div class="form-group">
+    <label for="taxPercentage">Tax Percentage (%)</label>
+    <input type="number" id="taxPercentage" name="taxPercentage" placeholder="Tax Percentage (%)">
+</div>
+
+<div class="form-group">
+    <label for="customerTaxNumber">Customer Tax Number</label>
+    <input type="text" id="customerTaxNumber" name="customerTaxNumber" placeholder="Customer Tax Number">
+</div>
+
+
 
         <!-- Items Section -->
         <h2>Items</h2>
         <div id="items">
-            <!-- First static item example -->
-            <div class="item">
-                <div class="item-fields">
-                    <input type="text" name="items[0][itemCode]" placeholder="Item Code" required>
-<input type="text" name="items[0][description]" placeholder="Description" required>
-<input type="number" name="items[0][quantity]" placeholder="Quantity" required>
-<input type="number" name="items[0][price]" placeholder="Unit Price" required>
-<input type="number" name="items[0][tax]" placeholder="Tax (%)" required>
-<input type="text" name="items[0][total]" placeholder="Total" readonly>
-
-                  
-                </div>
-                <div class="item-buttons">
-                    <button type="button" class="edit-btn" data-action="save"><i class="fas fa-save"></i></button>
-                    <button type="button" class="delete-btn"><i class="fas fa-trash"></i></button>
-                </div>
+            <!-- First item example with Taxable Option -->
+        <div class="item">
+    <div class="item-fields">
+        <input type="text" name="itemCode" placeholder="Item Code" required>
+        <input type="text" name="description" placeholder="Description" required>
+        <input type="number" name="quantity" placeholder="Quantity" required>
+        <input type="number" name="price" placeholder="Unit Price" required>
+        <label>Taxable <input type="checkbox" name="isTaxable" onchange="toggleTaxField(this)"></label>
+        <input type="number" name="taxAmount" placeholder="Tax (%)" class="tax-field" style="display: none;" disabled>
+        <input type="text" name="lineTotal" placeholder="Line Total" readonly>
+    </div>
+    <div class="item-buttons">
+        <button type="button" class="edit-btn" data-action="save"><i class="fas fa-save"></i></button>
+        <button type="button" class="delete-btn"><i class="fas fa-trash"></i></button>
+    </div>
+</div>    
+    <!-- Tax input field, initially hidden and disabled -->
+    <input type="number" name="taxAmount" placeholder="Tax (%)" class="tax-field" style="display: none;" disabled>
+</div>
             </div>
         </div>
 
-        <!-- Add Item Button on a separate line -->
+        <!-- Add Item Button -->
         <div class="button-container">
             <button type="button" id="addItem">
                 <i class="fas fa-plus"></i> Add Item
             </button>
         </div>
 
-        <!-- Create Invoice Button on a separate line -->
+        <!-- Totals Section -->
+        <h2>Invoice Totals</h2>
+
+        <!-- Additional Fee Field -->
+        <div class="form-group">
+            <input type="number" id="additionalFee" name="additionalFee" placeholder=" " step="0.01">
+            <label for="additionalFee">Additional Fee</label>
+        </div>
+
+        <!-- Discount Field -->
+        <div class="form-group">
+            <input type="number" id="discount" name="discount" placeholder=" " step="0.01">
+            <label for="discount">Discount</label>
+        </div>
+
+        <!-- Total Tax Field (calculated automatically) -->
+        <div class="form-group">
+            <input type="number" id="taxTotal" name="taxTotal" placeholder=" " required readonly>
+            <label for="taxTotal">Total Tax</label>
+        </div>
+
+        <!-- Grand Total Field (calculated automatically) -->
+        <div class="form-group">
+            <input type="number" id="grandTotal" name="grandTotal" placeholder=" " required readonly>
+            <label for="grandTotal">Grand Total</label>
+        </div>
+
+        {{!-- <!-- Payable Amount Field (calculated automatically) -->
+        <div class="form-group">
+            <input type="number" id="payableAmount" name="payableAmount" placeholder=" " required readonly>
+            <label for="payableAmount">Payable Amount</label>
+        </div> --}}
+
+        <div id="totalAmountContainer" class="total-amount-section">
+    <h3>Total Amount payable: <span id="totalAmount">0.00</span></h3>
+    <p>Payment Terms: Please pay within 30 days.</p>
+</div>
+
+
+        <!-- Create Invoice Button -->
         <div class="button-container">
             <button type="submit">
                 <i class="fas fa-file-invoice"></i> Create Invoice
             </button>
         </div>
 
+    </form>
 
-    <!-- Total Amount Section -->
-     <!-- Total Amount Section -->
-    <div id="totalAmountContainer" class="total-amount-section">
-        <h3>Total Amount: <span id="totalAmount">0</span> </h3>
-        <p>Payment Terms: Please pay within 30 days.</p>
-    </div>
-        </form>
+    <!-- JavaScript for Dynamic Fields -->
+   
+   
 
     <!-- JavaScript File for Invoice Logic -->
-    <script src="/js/invoice.js"></script>
+    <script src="/js/e-invoice.js"></script>
 
 </body>
 
