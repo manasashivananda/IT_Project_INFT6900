@@ -157,167 +157,138 @@ function isAuthenticated(req, res, next) {
 
 
 
- app.get("/dashboard", isAuthenticated, async (req, res) => {
-   try {
-     // Fetch statistics data from the API
-     const statisticsResponse = await fetch('http://localhost:3000/api/statistics');
-     if (!statisticsResponse.ok) {
-       throw new Error(`Failed to fetch statistics: ${statisticsResponse.statusText}`);
-     }
+//  app.get("/dashboard", isAuthenticated, async (req, res) => {
+//    try {
+//      // Fetch statistics data from the API
+//      const statisticsResponse = await fetch('http://localhost:3000/api/statistics');
+//      if (!statisticsResponse.ok) {
+//        throw new Error(`Failed to fetch statistics: ${statisticsResponse.statusText}`);
+//      }
  
-     const statistics = await statisticsResponse.json();
+//      const statistics = await statisticsResponse.json();
  
-     // Render the dashboard with the retrieved statistics
-     res.render("dashboard", {
-       title: "Dashboard",
-       user: req.session.user,
-       statistics: {
-         totalInvoicesCreated: statistics.totalInvoices || 0,
-         invoicesDueThisMonth: statistics.dueThisMonth || 0,
-         averageInvoiceAmount: statistics.averageInvoiceAmount || "0.00",
-         totalClients: statistics.totalClients || 0,
-       },
-       activities: req.session.activities || []
-     });
-   } catch (error) {
-     console.error("Error fetching statistics:", error.message);
+//      // Render the dashboard with the retrieved statistics
+//      res.render("dashboard", {
+//        title: "Dashboard",
+//        user: req.session.user,
+//        statistics: {
+//          totalInvoicesCreated: statistics.totalInvoices || 0,
+//          invoicesDueThisMonth: statistics.dueThisMonth || 0,
+//          averageInvoiceAmount: statistics.averageInvoiceAmount || "0.00",
+//          totalClients: statistics.totalClients || 0,
+//        },
+//        activities: req.session.activities || []
+//      });
+//    } catch (error) {
+//      console.error("Error fetching statistics:", error.message);
  
-     // Render the dashboard with default values if fetching statistics fails
-     res.render("dashboard", {
-       title: "Dashboard",
-       user: req.session.user,
-       statistics: {
-         totalInvoicesCreated: 0,
-         invoicesDueThisMonth: 0,
-         averageInvoiceAmount: "0.00",
-         totalClients: 0,
-       }
-     });
-   }
- });
- 
+//      // Render the dashboard with default values if fetching statistics fails
+//      res.render("dashboard", {
+//        title: "Dashboard",
+//        user: req.session.user,
+//        statistics: {
+//          totalInvoicesCreated: 0,
+//          invoicesDueThisMonth: 0,
+//          averageInvoiceAmount: "0.00",
+//          totalClients: 0,
+//        }
+//      });
+//    }
+//  });
+app.get("/dashboard", isAuthenticated, async (req, res) => {
+  try {
+    // Fetch statistics data from the API
+    const statisticsResponse = await fetch('http://localhost:3000/api/statistics');
+    if (!statisticsResponse.ok) {
+      throw new Error(`Failed to fetch statistics: ${statisticsResponse.statusText}`);
+    }
+    const statistics = await statisticsResponse.json();
+
+    // Fetch recent invoices
+    const recentInvoices = await Invoice.find({})
+      .sort({ issueDate: -1 })
+      .limit(5);
+
+    // Define currency symbols (expand this list as needed)
+    const currencySymbols = {
+      USD: '$',
+      EUR: '€',
+      AUD: 'A$',
+      GBP: '£',
+      INR: '₹',
+      // Add other currencies as needed
+    };
+
+    // Format recent activities with correct currency symbol
+    const activities = recentInvoices.map(invoice => {
+      const date = invoice.issueDate 
+        ? new Date(invoice.issueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) 
+        : "Unknown Date";
+
+      const customerName = invoice.customerParty?.name || invoice.customerParty?.alternateName || "Unnamed Customer";
+      const invoiceNumber = invoice.invoiceNumber || "Unknown Number";
+
+      // Use currency symbol or fall back to currency code if symbol is not defined
+    // Use currency symbol or fall back to currency code if symbol is not defined
+  const currencySymbol = currencySymbols[invoice.currency] || `${invoice.currency} `;
+  const totalAmount = invoice.totalAmount != null ? `${currencySymbol}${invoice.totalAmount}` : "Amount Unknown";
+
+
+      return `🧾 Invoice #${invoiceNumber} created  on ${date}`;
+    });
+
+    // Render the dashboard with statistics and activities
+    res.render("dashboard", {
+      title: "Dashboard",
+      user: req.session.user,
+      statistics: {
+        totalInvoicesCreated: statistics.totalInvoices || 0,
+        invoicesDueThisMonth: statistics.dueThisMonth || 0,
+        averageInvoiceAmount: statistics.averageInvoiceAmount || "0.00",
+        totalClients: statistics.totalClients || 0,
+      },
+      activities: activities
+    });
+  } catch (error) {
+    console.error("Error fetching data for the dashboard:", error.message);
+    res.render("dashboard", {
+      title: "Dashboard",
+      user: req.session.user,
+      statistics: {
+        totalInvoicesCreated: 0,
+        invoicesDueThisMonth: 0,
+        averageInvoiceAmount: "0.00",
+        totalClients: 0,
+      },
+      activities: []
+    });
+  }
+});
+
+
+
+// Endpoint for recent activities - Optional (if frontend fetches this separately)
+app.get("/api/recent-activities", isAuthenticated, async (req, res) => {
+  try {
+    const recentInvoices = await Invoice.find({})
+      .sort({ issueDate: -1 })
+      .limit(5);
+
+    res.json(recentInvoices);
+  } catch (error) {
+    console.error("Error fetching recent activities:", error.message);
+    res.status(500).json({ error: "Failed to fetch recent activities." });
+  }
+});
+
+
+
 
 // Route to render e-invoice form
 app.get('/invoice', isAuthenticated, (req, res) => {
   res.render('e-invoice', { title: 'Create E-Invoice' });
 });
 
-
-// POST route for invoice creation
-// app.post('/api/invoice', async (req, res) => {
-//   try {
-//       const {
-//           invoiceNumber,
-//           invoiceDate,
-//           dueDate,
-//           currencyCode,
-//           businessName,
-//           ssmNumber,
-//           taxNumber,
-//           supplierAddress,
-//           buyerName,
-//           buyerAddress,
-//           additionalFee,
-//           discount,
-//           items,
-//           taxType, // Ensure taxType is included
-//       } = req.body;
-
-//       // Validate required fields
-//       if (!invoiceNumber || !invoiceDate || !dueDate || !currencyCode || !businessName || 
-//           !ssmNumber || !taxNumber || !supplierAddress || !buyerName || !buyerAddress || 
-//           !Array.isArray(items) || items.length === 0 || !taxType) {
-//           return res.status(400).json({ message: 'All fields are required.' });
-//       }
-
-//       // Check for duplicate invoice number
-//       const existingInvoice = await Invoice.findOne({ invoiceNumber });
-//       if (existingInvoice) {
-//           return res.status(400).json({ message: 'Invoice number already exists.' });
-         
-//       }
-
-//       let totalAmount = 0;
-//       let totalTax = 0;
-
-//       items.forEach(item => {
-//           const quantity = parseFloat(item.quantity) || 0;
-//           const price = parseFloat(item.price.priceAmount) || 0;
-
-//           // Ensure all required fields are present and valid
-//           if (!item.itemCode || !item.description || quantity <= 0 || price <= 0) {
-//               throw new Error('Invalid item data. Each item must have a code, description, positive quantity, and price.');
-//           }
-
-//           item.lineTotalAmount = quantity * price; // Calculate line total
-//           totalAmount += item.lineTotalAmount;
-
-//           // Calculate total tax if taxable
-//           if (item.isTaxable) {
-//               totalTax += item.tax.taxAmount; // Assuming taxAmount is already calculated
-//           }
-//       });
-
-//       // Include additional fees and discounts
-//       totalAmount += additionalFee - discount;
-
-//       const newInvoice = new Invoice({
-//           invoiceNumber,
-//           issueDate: new Date(invoiceDate),
-//           dueDate: new Date(dueDate),
-//           currencyCode,
-//           businessName,
-//           ssmNumber,
-//           taxNumber,
-//           supplierAddress,
-//           buyerName,
-//           buyerAddress,
-//           taxType,
-//           items,
-//           additionalFee,
-//           discount,
-//           totalAmount,
-//           taxTotal: totalTax,
-//           grandTotal: totalAmount,
-//           payableAmount: totalAmount,
-//       });
-
-//       // Save invoice to MongoDB
-//       await newInvoice.save();
-
-//       // Generate XML in UBL format
-//       const xmlContent = generateUBLXML({
-//           invoiceNumber,
-//           invoiceDate,
-//           currency: currencyCode,
-//           totalAmount,
-//           taxAmount: totalTax,
-//           items
-//       });
-
-//       // Define file path for saving XML
-//       const invoiceDir = path.join(__dirname, 'invoices');
-//       if (!fs.existsSync(invoiceDir)) {
-//           fs.mkdirSync(invoiceDir);
-//       }
-//       const filePath = path.join(invoiceDir, `invoice_${invoiceNumber}.xml`);
-
-//       // Write the XML content to a file
-//       fs.writeFileSync(filePath, xmlContent);
-
-//       // Send the response
-//       res.status(201).json({
-//           message: 'Invoice created successfully.',
-//           invoice: newInvoice,
-//           downloadLink: `/download-invoice-xml/${invoiceNumber}`
-//       });
-
-//   } catch (error) {
-//       console.error('Error creating invoice:', error);
-//       res.status(500).json({ message: `Error creating invoice: ${error.message}` });
-     
-//   }
-// });
 
 app.post('/api/invoice', async (req, res) => {
   try {
@@ -510,22 +481,44 @@ app.get('/api/statistics', async (req, res) => {
   }
 });
 
-
 app.get('/api/performance-data', async (req, res) => {
   try {
-      const currentYear = new Date().getFullYear();
+      const currentYear = new Date().getUTCFullYear();
+      const startOfYear = new Date(Date.UTC(currentYear, 0, 1)); // Start of the year in UTC
+      const endOfYear = new Date(Date.UTC(currentYear + 1, 0, 1)); // Start of the next year in UTC
+
       const monthlyInvoices = Array(12).fill(0);
       const monthlyRevenue = Array(12).fill(0);
 
+      // Filter invoices based on issueDate within the UTC-defined range
       const invoices = await Invoice.find({
-          invoiceDate: { $gte: new Date(currentYear, 0, 1), $lt: new Date(currentYear + 1, 0, 1) }
+          issueDate: { $gte: startOfYear, $lt: endOfYear }
       });
 
+      // Log the total invoices retrieved
+      console.log("Total Invoices Retrieved:", invoices.length);
+
       invoices.forEach(invoice => {
-          const month = new Date(invoice.invoiceDate).getMonth();
+          // Log each invoice's date to confirm correct retrieval
+          console.log("Invoice Date:", invoice.issueDate);
+
+          if (!invoice.issueDate || isNaN(new Date(invoice.issueDate).getMonth())) {
+              console.error("Invalid issueDate:", invoice.issueDate);
+              return;
+          }
+          if (typeof invoice.totalAmount !== 'number' || isNaN(invoice.totalAmount)) {
+              console.error("Invalid totalAmount:", invoice.totalAmount);
+              return;
+          }
+
+          const month = new Date(invoice.issueDate).getUTCMonth(); // Get the month in UTC
           monthlyInvoices[month]++;
-          monthlyRevenue[month] += invoice.totalAmount || 0; // Ensure totalAmount is defined
+          monthlyRevenue[month] += invoice.totalAmount;
       });
+
+      // Log the monthly data after calculation
+      console.log("Monthly Invoices Count:", monthlyInvoices);
+      console.log("Monthly Revenue Totals:", monthlyRevenue);
 
       // Return the data
       res.json({
@@ -538,6 +531,7 @@ app.get('/api/performance-data', async (req, res) => {
       res.status(500).json({ message: 'Error fetching performance data' });
   }
 });
+
 
 
 
