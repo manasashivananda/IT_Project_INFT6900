@@ -4,12 +4,12 @@ function showCustomTaxField(selectElement) {
 
     // Show or hide the entire container based on "Other" selection
     if (selectElement.value === "Other") {
-        customTaxContainer.style.display = "block";  // Show container
-        customTaxInput.disabled = false;             // Enable input
+        customTaxContainer.style.display = "block";  
+        customTaxInput.disabled = false;             
     } else {
-        customTaxContainer.style.display = "none";   // Hide container
-        customTaxInput.value = "";                   // Clear input
-        customTaxInput.disabled = true;              // Disable input
+        customTaxContainer.style.display = "none";   
+        customTaxInput.value = "";                   
+        customTaxInput.disabled = true;             
     }
 }
 
@@ -142,18 +142,17 @@ function calculateTotals() {
 function getCurrencySymbol(currencyCode) {
     switch (currencyCode) {
         case 'USD':
-            return '$'; // US Dollar
+            return '$';
         case 'EUR':
-            return '€'; // Euro
+            return '€'; 
         case 'MYR':
-            return 'RM'; // Malaysian Ringgit
+            return 'RM'; 
         case 'IND':
-            return '₹'; // Indian Rupee symbol
+            return '₹';
         case 'AUD':
-            return 'A$'; // Australian Dollar symbol
-        // Add more cases as needed
+            return 'A$'; 
         default:
-            return ''; // Return empty if no match found
+            return ''; 
     }
 }
 
@@ -168,7 +167,7 @@ function disableAllItems() {
         });
         const editButton = item.querySelector(".edit-btn");
         if (editButton) {
-            editButton.dataset.action = "edit"; // Change button to "edit" mode
+            editButton.dataset.action = "edit"; 
             editButton.innerHTML = `<i class="fas fa-edit"></i>`;
         }
     });
@@ -240,7 +239,7 @@ function calculateLineTotal(quantityInput, priceInput, taxCheckbox, taxInput, li
 
     lineTotalInput.value = lineTotal.toFixed(2); // Update line total display
 
-    // Tax amount calculation will be handled in calculateTotals now
+    
 }
 
 // Function to toggle between save and edit states
@@ -274,13 +273,13 @@ function toggleTaxField(checkbox) {
     const taxField = checkbox.closest(".item-fields").querySelector(".tax-field");
 
     if (checkbox.checked) {
-        taxField.style.display = "inline-block"; // Show the tax field
-        taxField.disabled = false; // Enable the tax field
-        taxField.focus(); // Optional: focus on the field for user convenience
+        taxField.style.display = "inline-block"; 
+        taxField.disabled = false; 
+        taxField.focus(); 
     } else {
-        taxField.style.display = "none"; // Hide the tax field
-        taxField.value = ""; // Clear the tax field when hiding it
-        taxField.disabled = true; // Disable the tax field when not needed
+        taxField.style.display = "none"; 
+        taxField.value = ""; 
+        taxField.disabled = true; 
     }
 }
 
@@ -311,13 +310,11 @@ window.onload = function() {
     if (savedCurrency) {
         currencySelect.value = ""; // This keeps it as "Select Currency"
         showCustomCurrencyField(currencySelect);
-        calculateTotals(); // Recalculate totals with saved currency
-    } else {
-        currencySelect.value = ""; // Ensure the dropdown is set to the placeholder
-        showCustomCurrencyField(currencySelect); // Ensure the custom field is hidden
-    }
+        calculateTotals(); 
+        currencySelect.value = ""; 
+        showCustomCurrencyField(currencySelect); 
+}
 };
-
 // Form submission handling
 document.getElementById('invoiceForm').addEventListener('submit', function(event) {
     event.preventDefault(); // Prevent the default form submission
@@ -330,6 +327,7 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
         const priceAmount = parseFloat(item.querySelector('input[name="price"]').value);
         const isTaxable = item.querySelector('input[name="isTaxable"]').checked;
         const taxAmount = isTaxable ? parseFloat(item.querySelector('input[name="taxAmount"]').value) || 0 : 0;
+        
 
          // Get the tax type code from the dropdown or input
          const taxTypeCode = isTaxable ? document.getElementById("taxType").value : "No Tax"; // Define taxTypeCode here
@@ -347,7 +345,7 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
                 price: {
                     priceAmount,
                     baseQuantity: 1,
-                    currencyCode: "USD" // Adjust based on user selection if needed
+                    currencyCode: "USD" 
                 },
                 isTaxable,
                 tax: {
@@ -368,18 +366,32 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
         alert("Please add at least one item to the invoice.");
         return;
     }
+      // Updated address structure for supplier and buyer
+      const supplierAddress = {
+        streetName: document.getElementById("supplierStreet").value,
+        cityName: document.getElementById("supplierCity").value,
+        postalZone: document.getElementById("supplierPostal").value,
+        country: document.getElementById("supplierCountry").value
+    };
+
+    const buyerAddress = {
+        streetName: document.getElementById("buyerStreet").value,
+        cityName: document.getElementById("buyerCity").value,
+        postalZone: document.getElementById("buyerPostal").value,
+        country: document.getElementById("buyerCountry").value
+    };
 
     const formData = {
         invoiceNumber: document.getElementById("invoiceNumber").value,
-        invoiceDate: document.getElementById("invoiceDate").value,
+        issueDate: document.getElementById("invoiceDate").value,
         dueDate: document.getElementById("dueDate").value,
         currencyCode: document.getElementById("currencyCode").value,
         businessName: document.getElementById("businessName").value,
         ssmNumber: document.getElementById("ssmNumber").value,
         taxNumber: document.getElementById("taxNumber").value,
-        supplierAddress: document.getElementById("supplierAddress").value,
+        supplierAddress,
         buyerName: document.getElementById("buyerName").value,
-        buyerAddress: document.getElementById("buyerAddress").value,
+        buyerAddress,
         additionalFee: parseFloat(document.getElementById("additionalFee").value) || 0,
         discount: parseFloat(document.getElementById("discount").value) || 0,
         items,
@@ -406,21 +418,75 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
         }
         return response.json();
     })
+   
     .then(data => {
         console.log("Response Data:", data); // Log the entire response data
-        if (data.invoice && data.invoice.invoiceNumber) {
-            window.location.href = `/invoice-success?invoiceNumber=${data.invoice.invoiceNumber}`;
+    
+        // Check if `data` has the expected structure and properties
+        if (data && data.invoice && data.invoice.invoiceNumber && data.invoice._id) {
+            console.log('Invoice Created:', data);
+            console.log('Invoice ID:', data.invoice._id);
+    
+            // Redirect to the success page with query parameters
+            window.location.href = `/invoice-success?invoiceNumber=${data.invoice.invoiceNumber}&invoiceId=${data.invoice._id}`;
         } else {
-            console.error("Invoice number not found in response.");
+            // Log an error if the expected properties are not found
+            console.error("Invoice number or ID not found in response:", data);
         }
     })
     .catch(error => {
-        console.error('Error:', error.message); // Log the error message
-       // window.location.href = `/invoice-error?message=${encodeURIComponent(error.message)}`;
-       alert(error.message);
+        console.error('Error:', error.message); 
+        alert(error.message);
     });
+    
+
+function updateInvoice(invoiceId, updatedData) {
+    fetch(`http://localhost:3000/api/invoice/${invoiceId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedData) // Pass the updated fields in the request body
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(`Error: ${errorData.message}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Invoice updated successfully:", data);
+        // Handle success, e.g., updating the UI
+    })
+    .catch(error => {
+        console.error("Error updating invoice:", error);
+        // Handle error, e.g., showing an error message to the user
+    });
+}
+
+function deleteInvoice(invoiceId) {
+    fetch(`http://localhost:3000/api/invoice/delete/${invoiceId}`, {
+        method: 'DELETE', // Make sure this is set to 'DELETE'
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errorData => {
+                throw new Error(`Error: ${errorData.message}`);
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Invoice deleted successfully:", data);
+    })
+    .catch(error => {
+        console.error("Error deleting invoice:", error);
+    });
+}
+
 });
-
-
-
-        

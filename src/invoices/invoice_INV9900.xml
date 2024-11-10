@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsm:CrossIndustryInvoice xmlns="[object Object]">
+  <rsm:ExchangedDocument>
+    <ram:ID>INV9900</ram:ID>
+    <ram:IssueDateTime>
+      <udt:DateTimeString format="102">2024-11-10</udt:DateTimeString>
+    </ram:IssueDateTime>
+    <rsm:SupplyChainTradeTransaction>
+      <ram:IncludedSupplyChainTradeLineItem>
+        <ram:AssociatedDocumentLineDocument>
+          <ram:LineID>1</ram:LineID>
+        </ram:AssociatedDocumentLineDocument>
+        <ram:SpecifiedTradeProduct>
+          <ram:SellerAssignedID>1</ram:SellerAssignedID>
+          <ram:Name>IPHONE</ram:Name>
+        </ram:SpecifiedTradeProduct>
+        <ram:SpecifiedLineTradeDelivery>
+          <ram:BilledQuantity unitCode="C62">1</ram:BilledQuantity>
+        </ram:SpecifiedLineTradeDelivery>
+        <ram:SpecifiedLineTradeSettlement>
+          <ram:SpecifiedTradeSettlementLineMonetarySummation>
+            <ram:LineTotalAmount>200</ram:LineTotalAmount>
+          </ram:SpecifiedTradeSettlementLineMonetarySummation>
+        </ram:SpecifiedLineTradeSettlement>
+      </ram:IncludedSupplyChainTradeLineItem>
+      <ram:ApplicableHeaderTradeSettlement>
+        <ram:InvoiceCurrencyCode>USD</ram:InvoiceCurrencyCode>
+        <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+          <ram:TaxTotalAmount currencyID="USD">0</ram:TaxTotalAmount>
+          <ram:GrandTotalAmount>200</ram:GrandTotalAmount>
+        </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+      </ram:ApplicableHeaderTradeSettlement>
+    </rsm:SupplyChainTradeTransaction>
+  </rsm:ExchangedDocument>
+</rsm:CrossIndustryInvoice>

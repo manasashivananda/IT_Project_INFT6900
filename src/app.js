@@ -1,4 +1,4 @@
-const express = require('express');
+  const express = require('express');
   const mongoose = require('mongoose');
   const path = require('path');
   const hbs = require('hbs');  // Using hbs for Handlebars
@@ -13,11 +13,9 @@ const express = require('express');
   const Invoice = require('./models/invoice');
   const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
   const generateUBLXML = require('./util/ublInvoiceGenerator');
- 
-
-
   const app = express();
   const PORT = process.env.PORT || 3000;
+  app.use(express.static('public'));
   
   // MongoDB connection
   mongoose.connect('mongodb://127.0.0.1:27017/invoices', {
@@ -55,7 +53,11 @@ app.use(
 );
  
  // Middleware setup
- app.use(cors());  // Enable CORS
+ app.use(cors({
+  origin: '*', // Replace with your frontend URL or '*' to allow all origins (for testing only)
+  methods: ['GET', 'POST', 'PUT', 'DELETE']
+}));
+
  app.use(express.static(static_path));  // Serve static files (CSS, JS, images)
  app.use(bodyParser.json());  // Parse JSON bodies
  app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
@@ -153,48 +155,6 @@ function isAuthenticated(req, res, next) {
   }
 }
 
-  // Route to render the dashboard page
-
-
-
-//  app.get("/dashboard", isAuthenticated, async (req, res) => {
-//    try {
-//      // Fetch statistics data from the API
-//      const statisticsResponse = await fetch('http://localhost:3000/api/statistics');
-//      if (!statisticsResponse.ok) {
-//        throw new Error(`Failed to fetch statistics: ${statisticsResponse.statusText}`);
-//      }
- 
-//      const statistics = await statisticsResponse.json();
- 
-//      // Render the dashboard with the retrieved statistics
-//      res.render("dashboard", {
-//        title: "Dashboard",
-//        user: req.session.user,
-//        statistics: {
-//          totalInvoicesCreated: statistics.totalInvoices || 0,
-//          invoicesDueThisMonth: statistics.dueThisMonth || 0,
-//          averageInvoiceAmount: statistics.averageInvoiceAmount || "0.00",
-//          totalClients: statistics.totalClients || 0,
-//        },
-//        activities: req.session.activities || []
-//      });
-//    } catch (error) {
-//      console.error("Error fetching statistics:", error.message);
- 
-//      // Render the dashboard with default values if fetching statistics fails
-//      res.render("dashboard", {
-//        title: "Dashboard",
-//        user: req.session.user,
-//        statistics: {
-//          totalInvoicesCreated: 0,
-//          invoicesDueThisMonth: 0,
-//          averageInvoiceAmount: "0.00",
-//          totalClients: 0,
-//        }
-//      });
-//    }
-//  });
 app.get("/dashboard", isAuthenticated, async (req, res) => {
   try {
     // Fetch statistics data from the API
@@ -265,21 +225,24 @@ app.get("/dashboard", isAuthenticated, async (req, res) => {
   }
 });
 
-
-
 // Endpoint for recent activities - Optional (if frontend fetches this separately)
-app.get("/api/recent-activities", isAuthenticated, async (req, res) => {
+app.get("/api/recent-activities", async (req, res) => {
   try {
-    const recentInvoices = await Invoice.find({})
-      .sort({ issueDate: -1 })
-      .limit(5);
+      const recentInvoices = await Invoice.find({})
+          .sort({ issueDate: -1 })  // Sort by issueDate in descending order
+          .limit(5);  // Limit to 5 most recent invoices
 
-    res.json(recentInvoices);
+      console.log("Fetched recent invoices:", recentInvoices);  // Log the result to verify
+
+      res.json(recentInvoices);  // Send the result to the client
   } catch (error) {
-    console.error("Error fetching recent activities:", error.message);
-    res.status(500).json({ error: "Failed to fetch recent activities." });
+      console.error("Error fetching recent activities:", error.message);
+      res.status(500).json({ error: "Failed to fetch recent activities." });
   }
 });
+
+
+
 
 
 
@@ -289,12 +252,12 @@ app.get('/invoice', isAuthenticated, (req, res) => {
   res.render('e-invoice', { title: 'Create E-Invoice' });
 });
 
-
+//Route to create invoice
 app.post('/api/invoice', async (req, res) => {
   try {
       const {
           invoiceNumber,
-          invoiceDate,
+          issueDate,
           dueDate,
           currencyCode,
           businessName,
@@ -303,14 +266,14 @@ app.post('/api/invoice', async (req, res) => {
           supplierAddress,
           buyerName,
           buyerAddress,
-          additionalFee,
-          discount,
+          additionalFee = 0,
+          discount = 0,
           items,
-          taxType, // Ensure taxType is included
+          taxType,
       } = req.body;
 
       // Validate required fields
-      if (!invoiceNumber || !invoiceDate || !dueDate || !currencyCode || !businessName || 
+      if (!invoiceNumber || !issueDate || !dueDate || !currencyCode || !businessName || 
           !ssmNumber || !taxNumber || !supplierAddress || !buyerName || !buyerAddress || 
           !Array.isArray(items) || items.length === 0 || !taxType) {
           return res.status(400).json({ message: 'All fields are required.' });
@@ -329,87 +292,80 @@ app.post('/api/invoice', async (req, res) => {
           const quantity = parseFloat(item.quantity) || 0;
           const price = parseFloat(item.price.priceAmount) || 0;
 
-          // Ensure all required fields are present and valid
           if (!item.itemCode || !item.description || quantity <= 0 || price <= 0) {
               throw new Error('Invalid item data. Each item must have a code, description, positive quantity, and price.');
           }
 
-          item.lineTotalAmount = quantity * price; // Calculate line total
+          item.lineTotalAmount = quantity * price;
           totalAmount += item.lineTotalAmount;
 
-          // Calculate total tax if taxable
-          if (item.isTaxable) {
-              totalTax += item.tax.taxAmount; // Assuming taxAmount is already calculated
+          if (item.isTaxable && item.tax && item.tax.taxAmount) {
+              totalTax += item.tax.taxAmount;
           }
       });
 
-      // Include additional fees and discounts
       totalAmount += additionalFee - discount;
 
       const newInvoice = new Invoice({
           invoiceNumber,
-          issueDate: new Date(invoiceDate),
+          issueDate: new Date(issueDate),
           dueDate: new Date(dueDate),
           currencyCode,
-          businessName,
-          ssmNumber,
-          taxNumber,
-          supplierAddress,
-          buyerName,
-          buyerAddress,
           taxType,
           items,
           additionalFee,
           discount,
           totalAmount,
           taxTotal: totalTax,
-          grandTotal: totalAmount,
-          payableAmount: totalAmount,
+          grandTotal: totalAmount + totalTax,
+          payableAmount: totalAmount + totalTax,
+          supplierParty: {
+              name: businessName,
+              ssmNumber: ssmNumber,
+              taxNumber: taxNumber,
+              address: {
+                  streetName: supplierAddress.streetName,
+                  cityName: supplierAddress.cityName,
+                  postalZone: supplierAddress.postalZone,
+                  country: supplierAddress.country
+              }
+          },
+          customerParty: {
+              name: buyerName,
+              address: {
+                  streetName: buyerAddress.streetName,
+                  cityName: buyerAddress.cityName,
+                  postalZone: buyerAddress.postalZone,
+                  country: buyerAddress.country
+              }
+          }
       });
 
-      // // Save invoice to MongoDB
-      // await newInvoice.save();
-      try {
-        // Save invoice to MongoDB
-        await newInvoice.save();
-        console.log("Invoice saved successfully!");
-    } catch (error) {
-        console.error("Error saving invoice:", error);
-    }
+      await newInvoice.save();
 
-      // Generate XML in UBL format
-      const xmlContent = generateUBLXML({
-          invoiceNumber,
-          invoiceDate,
-          currency: currencyCode,
-          totalAmount,
-          taxAmount: totalTax,
-          items
-      });
+      const invoiceData = newInvoice.toObject({ getters: true });
 
-      // Define file path for saving XML
-      const invoiceDir = path.join(__dirname, 'invoices');
-      if (!fs.existsSync(invoiceDir)) {
-          fs.mkdirSync(invoiceDir);
-      }
-      const filePath = path.join(invoiceDir, `invoice_${invoiceNumber}.xml`);
+      const removeNestedIds = (obj) => {
+          if (Array.isArray(obj)) {
+              obj.forEach(removeNestedIds);
+          } else if (obj && typeof obj === 'object') {
+              if (obj._id && obj._id !== invoiceData._id) delete obj._id;
+              if (obj.id && obj.id !== invoiceData._id) delete obj.id;
+              Object.values(obj).forEach(removeNestedIds);
+          }
+      };
+      removeNestedIds(invoiceData);
 
-      // Write the XML content to a file
-      fs.writeFileSync(filePath, xmlContent);
-
-      // Send the response
       res.status(201).json({
           message: 'Invoice created successfully.',
-          invoice: newInvoice,
+          invoice: invoiceData,
           downloadLink: `/download-invoice-xml/${invoiceNumber}`
       });
-
   } catch (error) {
       console.error('Error creating invoice:', error);
       res.status(500).json({ message: `Error creating invoice: ${error.message}` });
   }
 });
-
 
 // Route to download invoice as XML
 app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
@@ -439,7 +395,6 @@ app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
 });
 
 // Endpoint to get a list of invoices for selection
-// Define the `/api/invoices` route
 app.get('/api/invoices', async (req, res) => {
   try {
     // Fetch only the required fields
@@ -532,24 +487,118 @@ app.get('/api/performance-data', async (req, res) => {
   }
 });
 
-
-
-
-
-
 // New route for successful invoice creation
 app.get('/invoice-success', (req, res) => {
   const invoiceNumber = req.query.invoiceNumber; // Get invoice number from query
+  const invoiceId = req.query.invoiceId; // Get invoice ID from query
   const message = "Invoice created successfully."; // Success message
-  res.render('invoice-success', { title: "Success", message, invoiceNumber }); // Render the success page with title, message, and invoice number
-});
 
+  // Log to check if both values are retrieved correctly
+  console.log('Invoice Number:', invoiceNumber);
+  console.log('Invoice ID:', invoiceId);
+
+  // Render the success page with title, message, invoice number, and invoice ID
+  res.render('invoice-success', { title: "Success", message, invoiceNumber, invoiceId });
+});
 
 // Route for error page
 app.get('/invoice-error', (req, res) => {
   const errorMessage = req.query.message; // Get error message from query
   res.render('invoice-error', { title: "Error", message: errorMessage }); // Render the error page
 });
+
+// GET /api/invoice/:invoiceId
+app.get('/api/invoice/:id', async (req, res) => {
+  try {
+      const { id } = req.params;
+      
+      // Find invoice by the provided ID
+      const invoice = await Invoice.findById(id);
+      
+      if (!invoice) {
+          // If no invoice is found, respond with a 404
+          return res.status(404).json({ message: 'Invoice not found.' });
+      }
+
+      // Return the found invoice
+      res.status(200).json(invoice);
+  } catch (error) {
+      console.error('Error retrieving invoice:', error);
+      
+      // Handle cases where the ID format is incorrect
+      if (error.kind === 'ObjectId') {
+          return res.status(400).json({ message: 'Invalid invoice ID format.' });
+      }
+
+      // General server error response
+      res.status(500).json({ message: 'Error retrieving invoice' });
+  }
+});
+
+app.delete('/api/invoice/delete/:invoiceNumber', async (req, res) => {
+  try {
+      const { invoiceNumber } = req.params;
+      const deletedInvoice = await Invoice.findOneAndDelete({ invoiceNumber });
+
+      if (!deletedInvoice) {
+          return res.status(404).json({ message: 'Invoice not found.' });
+      }
+
+      res.status(200).json({
+          message: 'Invoice deleted successfully',
+          invoiceNumber: deletedInvoice.invoiceNumber // Include invoice number in the response
+      });
+  } catch (error) {
+      console.error('Error deleting invoice:', error);
+      res.status(500).json({ message: 'Error deleting invoice' });
+  }
+});
+
+
+// PUT route to update invoice details
+app.put('/invoice/:id', async (req, res) => {
+  try {
+      const { id } = req.params;
+      const updatedFields = req.body;
+
+      if (!updatedFields || Object.keys(updatedFields).length === 0) {
+          return res.status(400).json({ message: 'Fields to update are required.' });
+      }
+
+      // Using $set explicitly to update nested fields correctly
+      const updatedInvoice = await Invoice.findByIdAndUpdate(
+          id,
+          { $set: updatedFields },
+          {
+              new: true, // Return the updated document
+              runValidators: true // Validate fields based on the schema
+          }
+      );
+
+      if (!updatedInvoice) {
+          return res.status(404).json({ message: 'Invoice not found.' });
+      }
+
+      // Build response to show only updated fields
+      const response = {
+          message: 'Successfully updated.',
+          updatedFields: {}
+      };
+
+      // Populate response with only updated fields
+      Object.keys(updatedFields).forEach((field) => {
+          response.updatedFields[field] = updatedInvoice.get(field);
+      });
+
+      res.status(200).json(response);
+  } catch (error) {
+      console.error('Error updating invoice:', error);
+      res.status(500).json({ message: 'Error updating invoice' });
+  }
+});
+
+
+
 
   // Start the server
 app.listen(PORT, () => {

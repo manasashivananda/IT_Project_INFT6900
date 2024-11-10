@@ -65,10 +65,23 @@
             <input type="text" id="taxNumber" name="taxNumber" placeholder=" " required>
             <label for="taxNumber">Supplier Tax Number</label>
         </div>
-        <div class="form-group">
-            <textarea id="supplierAddress" name="supplierAddress" placeholder=" " required></textarea>
-            <label for="supplierAddress">Supplier Address</label>
-        </div>
+          <!-- Supplier Address Fields -->
+    <div class="form-group">
+        <input type="text" id="supplierStreet" name="supplierAddress[streetName]" placeholder=" " required>
+        <label for="supplierStreet">Supplier Street Name</label>
+    </div>
+    <div class="form-group">
+        <input type="text" id="supplierCity" name="supplierAddress[cityName]" placeholder=" " required>
+        <label for="supplierCity">Supplier City</label>
+    </div>
+    <div class="form-group">
+        <input type="text" id="supplierPostal" name="supplierAddress[postalZone]" placeholder=" " required>
+        <label for="supplierPostal">Supplier Postal Code</label>
+    </div>
+    <div class="form-group">
+        <input type="text" id="supplierCountry" name="supplierAddress[country]" placeholder=" " required>
+        <label for="supplierCountry">Supplier Country</label>
+    </div>
 
         <!-- Buyer Information -->
         <h2>Buyer Information</h2>
@@ -76,10 +89,23 @@
             <input type="text" id="buyerName" name="buyerName" placeholder=" " required>
             <label for="buyerName">Buyer Name</label>
         </div>
-        <div class="form-group">
-            <textarea id="buyerAddress" name="buyerAddress" placeholder=" " required></textarea>
-            <label for="buyerAddress">Buyer Address</label>
-        </div>
+        <!-- Buyer Address Fields -->
+    <div class="form-group">
+        <input type="text" id="buyerStreet" name="buyerAddress[streetName]" placeholder=" " required>
+        <label for="buyerStreet">Buyer Street Name</label>
+    </div>
+    <div class="form-group">
+        <input type="text" id="buyerCity" name="buyerAddress[cityName]" placeholder=" " required>
+        <label for="buyerCity">Buyer City</label>
+    </div>
+    <div class="form-group">
+        <input type="text" id="buyerPostal" name="buyerAddress[postalZone]" placeholder=" " required>
+        <label for="buyerPostal">Buyer Postal Code</label>
+    </div>
+    <div class="form-group">
+        <input type="text" id="buyerCountry" name="buyerAddress[country]" placeholder=" " required>
+        <label for="buyerCountry">Buyer Country</label>
+    </div>
         
         <!-- Tax Type Selection -->
           <h2>Tax Information</h2>
@@ -108,8 +134,6 @@
     <label for="customerTaxNumber">Customer Tax Number</label>
     <input type="text" id="customerTaxNumber" name="customerTaxNumber" placeholder="Customer Tax Number">
 </div>
-
-
 
         <!-- Items Section -->
         <h2>Items</h2>
@@ -170,12 +194,6 @@
             <label for="grandTotal">Grand Total</label>
         </div>
 
-        {{!-- <!-- Payable Amount Field (calculated automatically) -->
-        <div class="form-group">
-            <input type="number" id="payableAmount" name="payableAmount" placeholder=" " required readonly>
-            <label for="payableAmount">Payable Amount</label>
-        </div> --}}
-
         <div id="totalAmountContainer" class="total-amount-section">
     <h3>Total Amount payable: <span id="totalAmount">0.00</span></h3>
     <p>Payment Terms: Please pay within 30 days.</p>
@@ -189,11 +207,7 @@
             </button>
         </div>
 
-    </form>
-
-    <!-- JavaScript for Dynamic Fields -->
-   
-   
+    </form>   
 
     <!-- JavaScript File for Invoice Logic -->
     <script src="/js/e-invoice.js"></script>

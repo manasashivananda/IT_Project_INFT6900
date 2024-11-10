@@ -1,4 +1,3 @@
-
 $(document).ready(function() {
     // Function to refresh statistics
     $('#refreshStats').on('click', function() {
@@ -48,20 +47,38 @@ $(document).ready(function() {
             console.error('Error loading statistics:', error);
         }
     }
-    
-  
-    // Initialize statistics and loadInvoices
-    loadStatistics();
-    loadInvoices();
-  
-    // Load and display list of invoices for download
+
+    // Function to delete the selected invoice
+    async function deleteInvoice(invoiceNumber) {
+        try {
+            const response = await fetch(`/api/invoice/delete/${invoiceNumber}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error deleting invoice');
+            }
+
+            alert("Invoice deleted successfully.");
+            $('#invoiceSelect option:selected').remove(); // Remove deleted invoice from dropdown
+        } catch (error) {
+            console.error("Error deleting invoice:", error);
+            alert("Error deleting invoice: " + error.message);
+        }
+    }
+
+    // Function to load the list of invoices into the dropdown
     async function loadInvoices() {
         try {
             const response = await fetch('/api/invoices');
             const invoices = await response.json();
             const invoiceSelect = $('#invoiceSelect');
             invoiceSelect.empty(); // Clear existing options
-            invoiceSelect.append('<option value="">Select Invoice to Download</option>');
+            invoiceSelect.append('<option value="">Select Invoice to Download or Delete</option>');
             invoices.forEach(invoice => {
                 const option = $('<option>', {
                     value: invoice.invoiceNumber,
@@ -73,8 +90,8 @@ $(document).ready(function() {
             console.error('Error loading invoices:', error);
         }
     }
-  
-    // Trigger invoice download
+
+    // Event listener for downloading the selected invoice
     $('#downloadInvoiceButton').on('click', function() {
         const selectedInvoiceNumber = $('#invoiceSelect').val();
         if (!selectedInvoiceNumber) {
@@ -85,28 +102,40 @@ $(document).ready(function() {
         window.location.href = `/download-invoice-xml/${selectedInvoiceNumber}`;
         $('#invoiceSelect').val(''); // Reset the dropdown selection
     });
-  });
-  
-  $(document).ready(function() {
+
+    // Event listener for deleting the selected invoice
+    $('#deleteInvoiceButton').on('click', function() {
+        const selectedInvoiceNumber = $('#invoiceSelect').val();
+        if (!selectedInvoiceNumber) {
+            alert('Please select an invoice to delete.');
+            return;
+        }
+
+        const confirmation = confirm("Are you sure you want to delete this invoice?");
+        if (!confirmation) {
+            return; // Exit if user cancels
+        }
+
+        deleteInvoice(selectedInvoiceNumber); // Call deleteInvoice function
+    });
+
+    // Load invoices on page load
+    loadInvoices();
+
+    // Function to load performance data and initialize charts
     async function loadPerformanceData() {
         try {
             const response = await fetch('/api/performance-data');
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
             
-            // Log the entire data object to inspect its structure
             console.log("Performance Data Loaded:", data);
 
-            // Ensure data fields are properly structured
             if (!Array.isArray(data.monthlyInvoices) || !Array.isArray(data.monthlyRevenue) || !Array.isArray(data.monthlyLabels)) {
                 console.error("Data structure is not as expected:", data);
                 return;
             }
             
-            // Log monthly data for debugging
-            console.log("Monthly Invoices:", data.monthlyInvoices);
-            console.log("Monthly Revenue:", data.monthlyRevenue);
-
             initCharts(data);
         } catch (error) {
             console.error('Error loading performance data:', error);
@@ -114,19 +143,8 @@ $(document).ready(function() {
     }
 
     function initCharts(data) {
-        // Ensure that all data points are numbers
-        const monthlyInvoices = data.monthlyInvoices.map(num => {
-            const parsed = Number(num);
-            return isNaN(parsed) ? 0 : parsed;
-        });
-        const monthlyRevenue = data.monthlyRevenue.map(num => {
-            const parsed = Number(num);
-            return isNaN(parsed) ? 0 : parsed;
-        });
-
-        // Log the parsed data to confirm it’s in numerical format
-        console.log("Parsed Monthly Invoices:", monthlyInvoices);
-        console.log("Parsed Monthly Revenue:", monthlyRevenue);
+        const monthlyInvoices = data.monthlyInvoices.map(num => Number(num) || 0);
+        const monthlyRevenue = data.monthlyRevenue.map(num => Number(num) || 0);
 
         const ctx1 = document.getElementById('monthlyInvoicesChart').getContext('2d');
         new Chart(ctx1, {
@@ -170,29 +188,43 @@ $(document).ready(function() {
             }
         });
     }
-
-    loadPerformanceData();
-});
-$(document).ready(function() {
+   
+    // Function to load recent activities
     async function loadRecentActivities() {
         try {
-            const response = await fetch('/api/recent-activities');
+            const response = await fetch('/api/recent-activities?' + new Date().getTime());  // Cache-busting timestamp
             if (!response.ok) throw new Error('Failed to fetch recent activities.');
-
+            
             const recentInvoices = await response.json();
+            console.log('Recent Invoices:', recentInvoices);  // Log the full response for debugging
+    
+            // Sort the invoices by issueDate to show the latest first
+            recentInvoices.sort((a, b) => new Date(b.issueDate) - new Date(a.issueDate));
+    
             const recentActivitiesContainer = $('#recent-activities');
-            recentActivitiesContainer.empty(); // Clear any existing activities
-
+            
+            // Clear existing activities
+            recentActivitiesContainer.empty();
+            console.log('Container cleared');
+            
+            // Check if there are recent invoices
             if (recentInvoices.length === 0) {
                 recentActivitiesContainer.append('<p>No recent activities available.</p>');
             } else {
                 recentInvoices.forEach(invoice => {
-                    const date = new Date(invoice.issueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                    const customerName = invoice.customerParty?.name || "Unknown Customer";
+                    const date = new Date(invoice.issueDate);
+                    
+                    // Check if the date is valid
+                    if (isNaN(date)) {
+                        console.log(`Invalid date for invoice #${invoice.invoiceNumber}`);
+                        return;  // Skip this invoice if the date is invalid
+                    }
+    
+                    // Format the date if valid
+                    const formattedDate = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                     const invoiceNumber = invoice.invoiceNumber || "Unknown Number";
-                    const totalAmount = invoice.totalAmount != null ? `$${invoice.totalAmount}` : "Amount Unknown";
-
-                    const activityText = `🧾 Invoice #${invoiceNumber} created  on ${date}`;
+                    const activityText = `🧾 Invoice #${invoiceNumber} created on ${formattedDate}`;
+                    
                     const activityElement = $('<p>').text(activityText);
                     recentActivitiesContainer.append(activityElement);
                 });
@@ -202,8 +234,13 @@ $(document).ready(function() {
             $('#recent-activities').append('<p>Unable to load recent activities.</p>');
         }
     }
+    
 
     // Load recent activities when the page loads
     loadRecentActivities();
-});
 
+
+    // Load other data on page load
+    loadStatistics();
+    loadPerformanceData();
+});
