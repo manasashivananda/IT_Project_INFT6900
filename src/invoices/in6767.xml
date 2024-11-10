@@ -1,0 +1,68 @@
+<?xml version='1.0'?>
+<invoice>
+    <invoiceNumber>in6767</invoiceNumber>
+    <issueDate>Sat Nov 09 2024 11:00:00 GMT+1100 (Australian Eastern Daylight Time)</issueDate>
+    <dueDate>Fri Dec 13 2024 11:00:00 GMT+1100 (Australian Eastern Daylight Time)</dueDate>
+    <currencyCode>USD</currencyCode>
+    <supplierParty>
+        <name>goodlyf</name>
+        <taxNumber>33</taxNumber>
+        <ssmNumber>33</ssmNumber>
+        <address>
+            <streetName>14 Old Agraharam near Market</streetName>
+            <cityName>OOty</cityName>
+            <postalZone>643001</postalZone>
+            <country>India</country>
+            <_id>67307fb80146c260ae51e4ec</_id>
+            <id>67307fb80146c260ae51e4ec</id>
+        </address>
+        <_id>67307fb80146c260ae51e4eb</_id>
+        <id>67307fb80146c260ae51e4eb</id>
+    </supplierParty>
+    <customerParty>
+        <name>xgfch</name>
+        <address>
+            <streetName>14 Old Agraharam near Market</streetName>
+            <cityName>OOty</cityName>
+            <postalZone>643001</postalZone>
+            <country>India</country>
+            <_id>67307fb80146c260ae51e4ee</_id>
+            <id>67307fb80146c260ae51e4ee</id>
+        </address>
+        <_id>67307fb80146c260ae51e4ed</_id>
+        <id>67307fb80146c260ae51e4ed</id>
+    </customerParty>
+    <taxType>VAT</taxType>
+    <items>
+        <itemCode>1</itemCode>
+        <description>IPHONE</description>
+        <quantity>2</quantity>
+        <price>
+            <priceAmount>200</priceAmount>
+            <baseQuantity>1</baseQuantity>
+            <currencyCode>USD</currencyCode>
+            <_id>67307fb80146c260ae51e4f0</_id>
+            <id>67307fb80146c260ae51e4f0</id>
+        </price>
+        <isTaxable>false</isTaxable>
+        <tax>
+            <taxTypeCode>No Tax</taxTypeCode>
+            <taxAmount>0</taxAmount>
+            <taxPercent>0</taxPercent>
+            <_id>67307fb80146c260ae51e4f1</_id>
+            <id>67307fb80146c260ae51e4f1</id>
+        </tax>
+        <lineTotalAmount>400</lineTotalAmount>
+        <_id>67307fb80146c260ae51e4ef</_id>
+        <id>67307fb80146c260ae51e4ef</id>
+    </items>
+    <additionalFee>0</additionalFee>
+    <discount>0</discount>
+    <totalAmount>400</totalAmount>
+    <taxTotal>0</taxTotal>
+    <grandTotal>400</grandTotal>
+    <payableAmount>400</payableAmount>
+    <_id>67307fb80146c260ae51e4ea</_id>
+    <__v>0</__v>
+    <id>67307fb80146c260ae51e4ea</id>
+</invoice>

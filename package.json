@@ -18,6 +18,8 @@
         "express-session": "^1.18.1",
         "flick-node-sdk": "^0.0.1",
         "hbs": "^4.2.0",
+        "js2xmlparser": "^5.0.0",
+        "moment": "^2.30.1",
         "mongoose": "^8.7.1",
         "node-fetch": "^3.3.2",
         "shortid": "^2.2.16",

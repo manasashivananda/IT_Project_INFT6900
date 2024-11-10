@@ -107,9 +107,9 @@ p {
 }
 
 /* Change the color of the image icon to match the hover */
-/* .advantage-card:hover img {
+.advantage-card:hover img {
   filter: brightness(0) invert(1); /* Inverts the color of the image to make it suitable for a dark background */
-} */
+}
 
 .advantage-card h5, .advantage-card p {
   text-align: center;

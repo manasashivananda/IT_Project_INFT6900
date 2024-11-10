@@ -63,8 +63,13 @@ $(document).ready(function() {
                 throw new Error(errorData.message || 'Error deleting invoice');
             }
 
+            // Re-fetch invoices after deletion to ensure the list is updated
+            await loadInvoices();  // This reloads the dropdown with the updated list of invoices
+
+            // Reload recent activities after deletion
+            loadRecentActivities();  // Reload the recent activities section
+
             alert("Invoice deleted successfully.");
-            $('#invoiceSelect option:selected').remove(); // Remove deleted invoice from dropdown
         } catch (error) {
             console.error("Error deleting invoice:", error);
             alert("Error deleting invoice: " + error.message);
@@ -77,15 +82,28 @@ $(document).ready(function() {
             const response = await fetch('/api/invoices');
             const invoices = await response.json();
             const invoiceSelect = $('#invoiceSelect');
-            invoiceSelect.empty(); // Clear existing options
+            
+            // Clear existing options
+            invoiceSelect.empty();
+            
+            // Add a default option
             invoiceSelect.append('<option value="">Select Invoice to Download or Delete</option>');
-            invoices.forEach(invoice => {
+            
+            // Filter out invalid data (e.g., missing or invalid invoice number)
+            const validInvoices = invoices.filter(invoice => invoice && invoice.invoiceNumber);
+            
+            // Append valid invoices to the dropdown
+            validInvoices.forEach(invoice => {
                 const option = $('<option>', {
                     value: invoice.invoiceNumber,
                     text: `Invoice #${invoice.invoiceNumber}`
                 });
                 invoiceSelect.append(option);
             });
+
+            // Optional: Log the valid invoices for debugging
+            console.log("Loaded valid invoices:", validInvoices);
+            
         } catch (error) {
             console.error('Error loading invoices:', error);
         }
@@ -188,7 +206,7 @@ $(document).ready(function() {
             }
         });
     }
-   
+
     // Function to load recent activities
     async function loadRecentActivities() {
         try {
@@ -200,6 +218,8 @@ $(document).ready(function() {
     
             // Sort the invoices by issueDate to show the latest first
             recentInvoices.sort((a, b) => new Date(b.issueDate) - new Date(a.issueDate));
+
+            console.log('Sorted Invoices:', recentInvoices);  // Debugging log to verify the sorting
     
             const recentActivitiesContainer = $('#recent-activities');
             
@@ -234,11 +254,9 @@ $(document).ready(function() {
             $('#recent-activities').append('<p>Unable to load recent activities.</p>');
         }
     }
-    
 
-    // Load recent activities when the page loads
+    // Load recent activities on page load
     loadRecentActivities();
-
 
     // Load other data on page load
     loadStatistics();

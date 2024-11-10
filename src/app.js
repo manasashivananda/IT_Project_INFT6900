@@ -16,6 +16,15 @@
   const app = express();
   const PORT = process.env.PORT || 3000;
   app.use(express.static('public'));
+  const js2xmlparser = require("js2xmlparser");
+
+const moment = require('moment'); // Add moment.js for date formatting
+
+// Register the Handlebars helper
+hbs.registerHelper('formatDate', function(date) {
+  return moment(date).format('YYYY-MM-DD'); // Format the date to 'YYYY-MM-DD'
+});
+
   
   // MongoDB connection
   mongoose.connect('mongodb://127.0.0.1:27017/invoices', {
@@ -117,35 +126,36 @@ app.post("/register", async (req, res) => {
   });
 
   // Route to handle login
-app.post("/login", async (req, res) => {
-  const { contactEmail, password } = req.body;
-
-  // Find user by email
-  const user = await Registration.findOne({ contactEmail: contactEmail });
-  if (!user) {
-    return res.status(400).json({ message: "Invalid email or password." });
-  }
-
-  // Check password against the hashed password
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) {
-    return res.status(400).json({ message: "Invalid email or password." });
-  }
-
-  // Set session variables for the logged-in user
-  req.session.user = {
-    name: user.contactName,
-    email: user.contactEmail,
-    businessName: user.businessName,
-    contactPhone: user.contactPhone,
-  };
-
-  console.log("Session after login:", req.session); // Log session data
-
-  // Send success response back to the frontend
-  res.json({ message: "Login successful!" });
-});
-
+  app.post("/login", async (req, res) => {
+    const { contactEmail, password } = req.body;
+  
+    // Find user by email
+    const user = await Registration.findOne({ contactEmail: contactEmail });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid email or password." });
+    }
+  
+    // Check password against the hashed password
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) {
+      return res.status(400).json({ message: "Invalid email or password." });
+    }
+  
+    // Set session variables for the logged-in user, including userId
+    req.session.user = {
+      id: user._id,  // Store the userId in the session
+      name: user.contactName,
+      email: user.contactEmail,
+      businessName: user.businessName,
+      contactPhone: user.contactPhone,
+    };
+  
+    console.log("Session after login:", req.session); // Log session data
+  
+    // Send success response back to the frontend
+    res.json({ message: "Login successful!" });
+  });
+  
 // Middleware to check if user is logged in
 function isAuthenticated(req, res, next) {
   if (req.session && req.session.user) {
@@ -154,7 +164,6 @@ function isAuthenticated(req, res, next) {
     res.redirect("/login");
   }
 }
-
 app.get("/dashboard", isAuthenticated, async (req, res) => {
   try {
     // Fetch statistics data from the API
@@ -225,19 +234,20 @@ app.get("/dashboard", isAuthenticated, async (req, res) => {
   }
 });
 
+
+
+
 // Endpoint for recent activities - Optional (if frontend fetches this separately)
-app.get("/api/recent-activities", async (req, res) => {
+app.get("/api/recent-activities", isAuthenticated, async (req, res) => {
   try {
-      const recentInvoices = await Invoice.find({})
-          .sort({ issueDate: -1 })  // Sort by issueDate in descending order
-          .limit(5);  // Limit to 5 most recent invoices
+    const recentInvoices = await Invoice.find({})
+      .sort({ issueDate: -1 })
+      .limit(5);
 
-      console.log("Fetched recent invoices:", recentInvoices);  // Log the result to verify
-
-      res.json(recentInvoices);  // Send the result to the client
+    res.json(recentInvoices);
   } catch (error) {
-      console.error("Error fetching recent activities:", error.message);
-      res.status(500).json({ error: "Failed to fetch recent activities." });
+    console.error("Error fetching recent activities:", error.message);
+    res.status(500).json({ error: "Failed to fetch recent activities." });
   }
 });
 
@@ -253,6 +263,120 @@ app.get('/invoice', isAuthenticated, (req, res) => {
 });
 
 //Route to create invoice
+// app.post('/api/invoice', async (req, res) => {
+//   try {
+//       const {
+//           invoiceNumber,
+//           issueDate,
+//           dueDate,
+//           currencyCode,
+//           businessName,
+//           ssmNumber,
+//           taxNumber,
+//           supplierAddress,
+//           buyerName,
+//           buyerAddress,
+//           additionalFee = 0,
+//           discount = 0,
+//           items,
+//           taxType,
+//       } = req.body;
+
+//       // Validate required fields
+//       if (!invoiceNumber || !issueDate || !dueDate || !currencyCode || !businessName || 
+//           !ssmNumber || !taxNumber || !supplierAddress || !buyerName || !buyerAddress || 
+//           !Array.isArray(items) || items.length === 0 || !taxType) {
+//           return res.status(400).json({ message: 'All fields are required.' });
+//       }
+
+//       // Check for duplicate invoice number
+//       const existingInvoice = await Invoice.findOne({ invoiceNumber });
+//       if (existingInvoice) {
+//           return res.status(400).json({ message: 'Invoice number already exists.' });
+//       }
+
+//       let totalAmount = 0;
+//       let totalTax = 0;
+
+//       items.forEach(item => {
+//           const quantity = parseFloat(item.quantity) || 0;
+//           const price = parseFloat(item.price.priceAmount) || 0;
+
+//           if (!item.itemCode || !item.description || quantity <= 0 || price <= 0) {
+//               throw new Error('Invalid item data. Each item must have a code, description, positive quantity, and price.');
+//           }
+
+//           item.lineTotalAmount = quantity * price;
+//           totalAmount += item.lineTotalAmount;
+
+//           if (item.isTaxable && item.tax && item.tax.taxAmount) {
+//               totalTax += item.tax.taxAmount;
+//           }
+//       });
+
+//       totalAmount += additionalFee - discount;
+
+//       const newInvoice = new Invoice({
+//           invoiceNumber,
+//           issueDate: new Date(issueDate),
+//           dueDate: new Date(dueDate),
+//           currencyCode,
+//           taxType,
+//           items,
+//           additionalFee,
+//           discount,
+//           totalAmount,
+//           taxTotal: totalTax,
+//           grandTotal: totalAmount + totalTax,
+//           payableAmount: totalAmount + totalTax,
+//           supplierParty: {
+//               name: businessName,
+//               ssmNumber: ssmNumber,
+//               taxNumber: taxNumber,
+//               address: {
+//                   streetName: supplierAddress.streetName,
+//                   cityName: supplierAddress.cityName,
+//                   postalZone: supplierAddress.postalZone,
+//                   country: supplierAddress.country
+//               }
+//           },
+//           customerParty: {
+//               name: buyerName,
+//               address: {
+//                   streetName: buyerAddress.streetName,
+//                   cityName: buyerAddress.cityName,
+//                   postalZone: buyerAddress.postalZone,
+//                   country: buyerAddress.country
+//               }
+//           }
+//       });
+
+//       await newInvoice.save();
+
+//       const invoiceData = newInvoice.toObject({ getters: true });
+
+//       const removeNestedIds = (obj) => {
+//           if (Array.isArray(obj)) {
+//               obj.forEach(removeNestedIds);
+//           } else if (obj && typeof obj === 'object') {
+//               if (obj._id && obj._id !== invoiceData._id) delete obj._id;
+//               if (obj.id && obj.id !== invoiceData._id) delete obj.id;
+//               Object.values(obj).forEach(removeNestedIds);
+//           }
+//       };
+//       removeNestedIds(invoiceData);
+
+//       res.status(201).json({
+//           message: 'Invoice created successfully.',
+//           invoice: invoiceData,
+//           downloadLink: `/download-invoice-xml/${invoiceNumber}`
+//       });
+//   } catch (error) {
+//       console.error('Error creating invoice:', error);
+//       res.status(500).json({ message: `Error creating invoice: ${error.message}` });
+//   }
+// });
+
 app.post('/api/invoice', async (req, res) => {
   try {
       const {
@@ -345,16 +469,30 @@ app.post('/api/invoice', async (req, res) => {
 
       const invoiceData = newInvoice.toObject({ getters: true });
 
+      // Remove the _id field (or convert it to string) before XML conversion
       const removeNestedIds = (obj) => {
-          if (Array.isArray(obj)) {
-              obj.forEach(removeNestedIds);
-          } else if (obj && typeof obj === 'object') {
-              if (obj._id && obj._id !== invoiceData._id) delete obj._id;
-              if (obj.id && obj.id !== invoiceData._id) delete obj.id;
-              Object.values(obj).forEach(removeNestedIds);
-          }
-      };
-      removeNestedIds(invoiceData);
+        if (Array.isArray(obj)) {
+            obj.forEach(removeNestedIds);
+        } else if (obj && typeof obj === 'object') {
+            // Convert _id and id to string or remove them
+            if (obj._id) obj._id = obj._id.toString();  // Convert ObjectId to string
+            if (obj.id) obj.id = obj.id.toString();    // Convert id field to string
+
+            // Recursively check and remove nested IDs
+            Object.values(obj).forEach(removeNestedIds);
+        }
+    };
+    removeNestedIds(invoiceData);
+
+      // Convert invoice data to XML
+      // Convert invoice data to UBL XML format
+      const xml = generateUBLXML(invoiceData);
+
+      // Define file path to save the XML
+      const filePath = path.join(__dirname, 'invoices', `${invoiceNumber}.xml`);
+
+      // Save the XML to file
+      fs.writeFileSync(filePath, xml, 'utf8');
 
       res.status(201).json({
           message: 'Invoice created successfully.',
@@ -366,6 +504,7 @@ app.post('/api/invoice', async (req, res) => {
       res.status(500).json({ message: `Error creating invoice: ${error.message}` });
   }
 });
+
 
 // Route to download invoice as XML
 app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
@@ -379,7 +518,7 @@ app.get('/download-invoice-xml/:invoiceNumber', async (req, res) => {
       }
 
       // Define file path
-      const filePath = path.join(__dirname, 'invoices', `invoice_${invoiceNumber}.xml`);
+      const filePath = path.join(__dirname, 'invoices', `${invoiceNumber}.xml`);
 
       // Check if the file exists
       if (!fs.existsSync(filePath)) {
@@ -556,48 +695,85 @@ app.delete('/api/invoice/delete/:invoiceNumber', async (req, res) => {
 
 
 // PUT route to update invoice details
-app.put('/invoice/:id', async (req, res) => {
+// app.put('/invoice/:id', async (req, res) => {
+//   try {
+//       const { id } = req.params;
+//       const updatedFields = req.body;
+
+//       if (!updatedFields || Object.keys(updatedFields).length === 0) {
+//           return res.status(400).json({ message: 'Fields to update are required.' });
+//       }
+
+//       // Using $set explicitly to update nested fields correctly
+//       const updatedInvoice = await Invoice.findByIdAndUpdate(
+//           id,
+//           { $set: updatedFields },
+//           {
+//               new: true, // Return the updated document
+//               runValidators: true // Validate fields based on the schema
+//           }
+//       );
+
+//       if (!updatedInvoice) {
+//           return res.status(404).json({ message: 'Invoice not found.' });
+//       }
+
+//       // Build response to show only updated fields
+//       const response = {
+//           message: 'Successfully updated.',
+//           updatedFields: {}
+//       };
+
+//       // Populate response with only updated fields
+//       Object.keys(updatedFields).forEach((field) => {
+//           response.updatedFields[field] = updatedInvoice.get(field);
+//       });
+
+//       res.status(200).json(response);
+//   } catch (error) {
+//       console.error('Error updating invoice:', error);
+//       res.status(500).json({ message: 'Error updating invoice' });
+//   }
+// });
+
+
+// Define your GET route to load the edit page with the invoice data
+app.get('/edit-invoice/:id', async (req, res) => {
   try {
-      const { id } = req.params;
-      const updatedFields = req.body;
+    const invoiceId = req.params.id;  // Get the invoice ID from the URL
+    const invoice = await Invoice.findById(invoiceId);  // Fetch the invoice from MongoDB
 
-      if (!updatedFields || Object.keys(updatedFields).length === 0) {
-          return res.status(400).json({ message: 'Fields to update are required.' });
-      }
+    if (!invoice) {
+      return res.status(404).send('Invoice not found');
+    }
 
-      // Using $set explicitly to update nested fields correctly
-      const updatedInvoice = await Invoice.findByIdAndUpdate(
-          id,
-          { $set: updatedFields },
-          {
-              new: true, // Return the updated document
-              runValidators: true // Validate fields based on the schema
-          }
-      );
-
-      if (!updatedInvoice) {
-          return res.status(404).json({ message: 'Invoice not found.' });
-      }
-
-      // Build response to show only updated fields
-      const response = {
-          message: 'Successfully updated.',
-          updatedFields: {}
-      };
-
-      // Populate response with only updated fields
-      Object.keys(updatedFields).forEach((field) => {
-          response.updatedFields[field] = updatedInvoice.get(field);
-      });
-
-      res.status(200).json(response);
+    // Render the 'edit-invoice' template and pass the invoice data
+    res.render('edit-invoice', { invoice });
   } catch (error) {
-      console.error('Error updating invoice:', error);
-      res.status(500).json({ message: 'Error updating invoice' });
+    console.error('Error fetching invoice:', error);
+    res.status(500).send('Server error');
   }
 });
 
 
+// Route to handle PUT request for updating the invoice
+app.put('/api/invoice/:id', async (req, res) => {
+  try {
+      const invoiceId = req.params.id;
+      const updatedData = req.body;
+
+      const updatedInvoice = await Invoice.findByIdAndUpdate(invoiceId, updatedData, { new: true });
+
+      if (!updatedInvoice) {
+          return res.status(404).json({ message: 'Invoice not found' });
+      }
+
+      res.json(updatedInvoice); // Respond with the updated invoice
+  } catch (error) {
+      console.error("Error updating invoice:", error);
+      res.status(500).json({ error: "Error updating invoice" });
+  }
+});
 
 
   // Start the server

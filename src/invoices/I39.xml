@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsm:CrossIndustryInvoice xmlns="[object Object]">
+  <rsm:ExchangedDocumentContext>
+    <ram:GuidelineSpecifiedDocumentContextParameter>
+      <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended</ram:ID>
+    </ram:GuidelineSpecifiedDocumentContextParameter>
+  </rsm:ExchangedDocumentContext>
+  <rsm:ExchangedDocument>
+    <ram:ID>I39</ram:ID>
+    <ram:TypeCode>380</ram:TypeCode>
+    <ram:IssueDateTime>
+      <udt:DateTimeString format="102">Thu Nov 07 2024 11:00:00 GMT+1100 (Australian Eastern Daylight Time)</udt:DateTimeString>
+    </ram:IssueDateTime>
+    <ram:IncludedNote>
+      <ram:Content>AFTER PAYMENT CLICK HERE: https://www.google.com/</ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>EBUSINESS SOFTWARE FRANCESOCIETE ANONYMECAPITAL SOCIAL 914694,10 EURB 412193567</ram:Content>
+      <ram:SubjectCode>REG</ram:SubjectCode>
+    </ram:IncludedNote>
+  </rsm:ExchangedDocument>
+  <rsm:SupplyChainTradeTransaction>
+    <ram:BuyerParty>
+      <ram:Name>Buyer Name</ram:Name>
+      <ram:PostalTradeAddress>
+        <ram:LineOne>456 Buyer St</ram:LineOne>
+        <ram:CityName>Buyer City</ram:CityName>
+        <ram:PostcodeCode>67890</ram:PostcodeCode>
+        <ram:CountryID>Country</ram:CountryID>
+      </ram:PostalTradeAddress>
+    </ram:BuyerParty>
+    <ram:SellerParty>
+      <ram:Name>Example Business</ram:Name>
+      <ram:PostalTradeAddress>
+        <ram:LineOne>123 Supplier St</ram:LineOne>
+        <ram:CityName>Supplier City</ram:CityName>
+        <ram:PostcodeCode>12345</ram:PostcodeCode>
+        <ram:CountryID>Country</ram:CountryID>
+      </ram:PostalTradeAddress>
+    </ram:SellerParty>
+  </rsm:SupplyChainTradeTransaction>
+  <ram:IncludedSupplyChainTradeLineItem>
+    <ram:AssociatedDocumentLineDocument>
+      <ram:LineID>ITEM001</ram:LineID>
+    </ram:AssociatedDocumentLineDocument>
+    <ram:SpecifiedTradeProduct>
+      <ram:GlobalID schemeID="IN">ITEM001</ram:GlobalID>
+      <ram:SellerAssignedID>ITEM001</ram:SellerAssignedID>
+      <ram:BuyerAssignedID>ITEM001</ram:BuyerAssignedID>
+      <ram:Name>Item 1 Description</ram:Name>
+    </ram:SpecifiedTradeProduct>
+    <ram:SpecifiedLineTradeAgreement>
+      <ram:NetPriceProductTradePrice>
+        <ram:ChargeAmount>50</ram:ChargeAmount>
+        <ram:BasisQuantity unitCode="C62">2</ram:BasisQuantity>
+      </ram:NetPriceProductTradePrice>
+    </ram:SpecifiedLineTradeAgreement>
+    <ram:SpecifiedLineTradeDelivery>
+      <ram:BilledQuantity unitCode="C62">2</ram:BilledQuantity>
+    </ram:SpecifiedLineTradeDelivery>
+    <ram:SpecifiedLineTradeSettlement>
+      <ram:ApplicableTradeTax>
+        <ram:TypeCode>GST</ram:TypeCode>
+        <ram:TaxAmount>5</ram:TaxAmount>
+        <ram:RateApplicablePercent>5</ram:RateApplicablePercent>
+      </ram:ApplicableTradeTax>
+      <ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:LineTotalAmount>100</ram:LineTotalAmount>
+      </ram:SpecifiedTradeSettlementLineMonetarySummation>
+    </ram:SpecifiedLineTradeSettlement>
+  </ram:IncludedSupplyChainTradeLineItem>
+  <ram:IncludedSupplyChainTradeLineItem>
+    <ram:AssociatedDocumentLineDocument>
+      <ram:LineID>ITEM002</ram:LineID>
+    </ram:AssociatedDocumentLineDocument>
+    <ram:SpecifiedTradeProduct>
+      <ram:GlobalID schemeID="IN">ITEM002</ram:GlobalID>
+      <ram:SellerAssignedID>ITEM002</ram:SellerAssignedID>
+      <ram:BuyerAssignedID>ITEM002</ram:BuyerAssignedID>
+      <ram:Name>Item 2 Description</ram:Name>
+    </ram:SpecifiedTradeProduct>
+    <ram:SpecifiedLineTradeAgreement>
+      <ram:NetPriceProductTradePrice>
+        <ram:ChargeAmount>100</ram:ChargeAmount>
+        <ram:BasisQuantity unitCode="C62">1</ram:BasisQuantity>
+      </ram:NetPriceProductTradePrice>
+    </ram:SpecifiedLineTradeAgreement>
+    <ram:SpecifiedLineTradeDelivery>
+      <ram:BilledQuantity unitCode="C62">1</ram:BilledQuantity>
+    </ram:SpecifiedLineTradeDelivery>
+    <ram:SpecifiedLineTradeSettlement>
+      <ram:ApplicableTradeTax>
+        <ram:TypeCode>GST</ram:TypeCode>
+        <ram:TaxAmount>0</ram:TaxAmount>
+        <ram:RateApplicablePercent>0</ram:RateApplicablePercent>
+      </ram:ApplicableTradeTax>
+      <ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:LineTotalAmount>100</ram:LineTotalAmount>
+      </ram:SpecifiedTradeSettlementLineMonetarySummation>
+    </ram:SpecifiedLineTradeSettlement>
+  </ram:IncludedSupplyChainTradeLineItem>
+  <ram:ApplicableHeaderTradeSettlement>
+    <ram:InvoiceCurrencyCode>USD</ram:InvoiceCurrencyCode>
+    <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+      <ram:LineTotalAmount>205</ram:LineTotalAmount>
+      <ram:TaxTotalAmount>5</ram:TaxTotalAmount>
+      <ram:GrandTotalAmount>210</ram:GrandTotalAmount>
+      <ram:DuePayableAmount>210</ram:DuePayableAmount>
+    </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+  </ram:ApplicableHeaderTradeSettlement>
+</rsm:CrossIndustryInvoice>

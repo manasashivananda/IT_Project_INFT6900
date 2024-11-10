@@ -440,32 +440,54 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
     });
     
 
-function updateInvoice(invoiceId, updatedData) {
-    fetch(`http://localhost:3000/api/invoice/${invoiceId}`, {
+// function updateInvoice(invoiceId, updatedData) {
+//     fetch(`http://localhost:3000/api/invoice/${invoiceId}`, {
+//         method: 'PUT',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify(updatedData) // Pass the updated fields in the request body
+//     })
+//     .then(response => {
+//         if (!response.ok) {
+//             return response.json().then(errorData => {
+//                 throw new Error(`Error: ${errorData.message}`);
+//             });
+//         }
+//         return response.json();
+//     })
+//     .then(data => {
+//         console.log("Invoice updated successfully:", data);
+//         // Handle success, e.g., updating the UI
+//     })
+//     .catch(error => {
+//         console.error("Error updating invoice:", error);
+//         // Handle error, e.g., showing an error message to the user
+//     });
+// }
+
+async function updateInvoice(invoiceId, updatedData) {
+    try {
+      const response = await fetch(`/api/invoice/${invoiceId}`, {
         method: 'PUT',
         headers: {
-            'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(updatedData) // Pass the updated fields in the request body
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(errorData => {
-                throw new Error(`Error: ${errorData.message}`);
-            });
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Invoice updated successfully:", data);
-        // Handle success, e.g., updating the UI
-    })
-    .catch(error => {
-        console.error("Error updating invoice:", error);
-        // Handle error, e.g., showing an error message to the user
-    });
-}
-
+        body: JSON.stringify(updatedData),  // Send the updated invoice data as JSON
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to update the invoice');
+      }
+  
+      const updatedInvoice = await response.json();
+      console.log('Updated invoice:', updatedInvoice);
+      return updatedInvoice;
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }
+cd  
 function deleteInvoice(invoiceId) {
     fetch(`http://localhost:3000/api/invoice/delete/${invoiceId}`, {
         method: 'DELETE', // Make sure this is set to 'DELETE'

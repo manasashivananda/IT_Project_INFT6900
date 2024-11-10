@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Invoice</title>
+</head>
+<body>
+    <h1>Edit Invoice</h1>
+
+    <!-- Form to edit the invoice -->
+    <form id="editInvoiceForm">
+        <!-- Invoice Number -->
+        <label for="invoiceNumber">Invoice Number:</label>
+        <input type="text" id="invoiceNumber" name="invoiceNumber" value="{{invoice.invoiceNumber}}" required />
+
+        <!-- Issue Date -->
+        <label for="issueDate">Issue Date:</label>
+        <input type="date" id="issueDate" name="issueDate" value="{{formatDate invoice.issueDate}}" required />
+
+        <!-- Due Date -->
+        <label for="dueDate">Due Date:</label>
+        <input type="date" id="dueDate" name="dueDate" value="{{formatDate invoice.dueDate}}" required />
+
+        <!-- Supplier Information -->
+        <h3>Supplier Information</h3>
+        <label for="supplierName">Name:</label>
+        <input type="text" id="supplierName" name="supplierName" value="{{invoice.supplierParty.name}}" required />
+
+        <label for="supplierStreet">Street:</label>
+        <input type="text" id="supplierStreet" name="supplierStreet" value="{{invoice.supplierParty.address.streetName}}" required />
+
+        <label for="supplierCity">City:</label>
+        <input type="text" id="supplierCity" name="supplierCity" value="{{invoice.supplierParty.address.cityName}}" required />
+
+        <label for="supplierPostalZone">Postal Zone:</label>
+        <input type="text" id="supplierPostalZone" name="supplierPostalZone" value="{{invoice.supplierParty.address.postalZone}}" required />
+
+        <label for="supplierCountry">Country:</label>
+        <input type="text" id="supplierCountry" name="supplierCountry" value="{{invoice.supplierParty.address.country}}" required />
+
+        <!-- Customer Information -->
+        <h3>Customer Information</h3>
+        <label for="customerName">Name:</label>
+        <input type="text" id="customerName" name="customerName" value="{{invoice.customerParty.name}}" required />
+
+        <label for="customerStreet">Street:</label>
+        <input type="text" id="customerStreet" name="customerStreet" value="{{invoice.customerParty.address.streetName}}" required />
+
+        <label for="customerCity">City:</label>
+        <input type="text" id="customerCity" name="customerCity" value="{{invoice.customerParty.address.cityName}}" required />
+
+        <label for="customerPostalZone">Postal Zone:</label>
+        <input type="text" id="customerPostalZone" name="customerPostalZone" value="{{invoice.customerParty.address.postalZone}}" required />
+
+        <label for="customerCountry">Country:</label>
+        <input type="text" id="customerCountry" name="customerCountry" value="{{invoice.customerParty.address.country}}" required />
+
+        <!-- Submit Button -->
+        <button type="submit">Update Invoice</button>
+    </form>
+
+    <script>
+        // Handle form submission to update the invoice
+        document.getElementById('editInvoiceForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+
+            // Collect form data
+            const updatedData = {
+                invoiceNumber: document.getElementById('invoiceNumber').value,
+                issueDate: document.getElementById('issueDate').value,
+                dueDate: document.getElementById('dueDate').value,
+                supplierParty: {
+                    name: document.getElementById('supplierName').value,
+                    address: {
+                        streetName: document.getElementById('supplierStreet').value,
+                        cityName: document.getElementById('supplierCity').value,
+                        postalZone: document.getElementById('supplierPostalZone').value,
+                        country: document.getElementById('supplierCountry').value,
+                    },
+                },
+                customerParty: {
+                    name: document.getElementById('customerName').value,
+                    address: {
+                        streetName: document.getElementById('customerStreet').value,
+                        cityName: document.getElementById('customerCity').value,
+                        postalZone: document.getElementById('customerPostalZone').value,
+                        country: document.getElementById('customerCountry').value,
+                    },
+                },
+            };
+
+            // Send PUT request to update the invoice
+            updateInvoice(updatedData);
+        });
+
+        // Function to send PUT request for updating the invoice
+        async function updateInvoice(updatedData) {
+            // Dynamically get the invoice ID from the template
+            const invoiceId = '{{invoice._id}}';
+            const response = await fetch(`/api/invoice/${invoiceId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedData),
+            });
+
+            if (response.ok) {
+                alert('Invoice updated successfully!');
+                // Optionally, redirect after successful update
+                window.location.href = '/dashboard'; // Redirect to the dashboard
+            } else {
+                alert('Failed to update invoice');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<?xml version='1.0'?>
+<invoice>
+    <invoiceNumber>I36</invoiceNumber>
+    <issueDate>Thu Nov 07 2024 11:00:00 GMT+1100 (Australian Eastern Daylight Time)</issueDate>
+    <dueDate>Thu Nov 14 2024 11:00:00 GMT+1100 (Australian Eastern Daylight Time)</dueDate>
+    <currencyCode>USD</currencyCode>
+    <supplierParty>
+        <name>Example Business</name>
+        <taxNumber>87654321</taxNumber>
+        <ssmNumber>12345678</ssmNumber>
+        <address>
+            <streetName>123 Supplier St</streetName>
+            <cityName>Supplier City</cityName>
+            <postalZone>12345</postalZone>
+            <country>Country</country>
+            <_id>67309a4de5f1a59fecee7816</_id>
+            <id>67309a4de5f1a59fecee7816</id>
+        </address>
+        <_id>67309a4de5f1a59fecee7815</_id>
+        <id>67309a4de5f1a59fecee7815</id>
+    </supplierParty>
+    <customerParty>
+        <name>Buyer Name</name>
+        <address>
+            <streetName>456 Buyer St</streetName>
+            <cityName>Buyer City</cityName>
+            <postalZone>67890</postalZone>
+            <country>Country</country>
+            <_id>67309a4de5f1a59fecee7818</_id>
+            <id>67309a4de5f1a59fecee7818</id>
+        </address>
+        <_id>67309a4de5f1a59fecee7817</_id>
+        <id>67309a4de5f1a59fecee7817</id>
+    </customerParty>
+    <taxType>GST</taxType>
+    <items>
+        <itemCode>ITEM001</itemCode>
+        <description>Item 1 Description</description>
+        <quantity>2</quantity>
+        <price>
+            <priceAmount>50</priceAmount>
+            <baseQuantity>1</baseQuantity>
+            <currencyCode>USD</currencyCode>
+            <_id>67309a4de5f1a59fecee781a</_id>
+            <id>67309a4de5f1a59fecee781a</id>
+        </price>
+        <isTaxable>true</isTaxable>
+        <tax>
+            <taxTypeCode>GST</taxTypeCode>
+            <taxAmount>5</taxAmount>
+            <taxPercent>5</taxPercent>
+            <_id>67309a4de5f1a59fecee781b</_id>
+            <id>67309a4de5f1a59fecee781b</id>
+        </tax>
+        <lineTotalAmount>100</lineTotalAmount>
+        <_id>67309a4de5f1a59fecee7819</_id>
+        <id>67309a4de5f1a59fecee7819</id>
+    </items>
+    <items>
+        <itemCode>ITEM002</itemCode>
+        <description>Item 2 Description</description>
+        <quantity>1</quantity>
+        <price>
+            <priceAmount>100</priceAmount>
+            <baseQuantity>1</baseQuantity>
+            <currencyCode>USD</currencyCode>
+            <_id>67309a4de5f1a59fecee781d</_id>
+            <id>67309a4de5f1a59fecee781d</id>
+        </price>
+        <isTaxable>false</isTaxable>
+        <tax>
+            <taxTypeCode>GST</taxTypeCode>
+            <taxAmount>0</taxAmount>
+            <taxPercent>0</taxPercent>
+            <_id>67309a4de5f1a59fecee781e</_id>
+            <id>67309a4de5f1a59fecee781e</id>
+        </tax>
+        <lineTotalAmount>100</lineTotalAmount>
+        <_id>67309a4de5f1a59fecee781c</_id>
+        <id>67309a4de5f1a59fecee781c</id>
+    </items>
+    <additionalFee>10</additionalFee>
+    <discount>5</discount>
+    <totalAmount>205</totalAmount>
+    <taxTotal>5</taxTotal>
+    <grandTotal>210</grandTotal>
+    <payableAmount>210</payableAmount>
+    <_id>67309a4de5f1a59fecee7814</_id>
+    <__v>0</__v>
+    <id>67309a4de5f1a59fecee7814</id>
+</invoice>
