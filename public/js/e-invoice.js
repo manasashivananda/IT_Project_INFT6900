@@ -4,22 +4,48 @@ function showCustomTaxField(selectElement) {
 
     // Show or hide the entire container based on "Other" selection
     if (selectElement.value === "Other") {
-        customTaxContainer.style.display = "block";  
-        customTaxInput.disabled = false;             
+        customTaxContainer.style.display = "block";
+        customTaxInput.disabled = false;
     } else {
-        customTaxContainer.style.display = "none";   
-        customTaxInput.value = "";                   
-        customTaxInput.disabled = true;             
+        customTaxContainer.style.display = "none";
+        customTaxInput.value = "";
+        customTaxInput.disabled = true;
     }
 }
 
+function generateInvoiceNumber() {
+    const now = new Date();
+    const year = now.getFullYear(); // Current year (e.g., 2024)
+    const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Current month (e.g., 11)
+
+    // Retrieve the last used sequence number from localStorage
+    let invoiceSequence = localStorage.getItem('invoiceSequence');
+
+    if (!invoiceSequence) {
+        // If no sequence number is found, start with 1
+        invoiceSequence = 1;
+    } else {
+        // Increment the sequence number
+        invoiceSequence = parseInt(invoiceSequence) + 1;
+    }
+
+    // Store the updated sequence number back to localStorage
+    localStorage.setItem('invoiceSequence', invoiceSequence);
+
+    // Return the formatted invoice number (INV-YYYY-MM-XXXX)
+    return `INV-${year}-${month}-${invoiceSequence.toString().padStart(4, '0')}`;
+}
+
+
+
+
 // Save the selected tax type to localStorage when changed
-document.getElementById("taxType").addEventListener("change", function() {
+document.getElementById("taxType").addEventListener("change", function () {
     localStorage.setItem("selectedTaxType", this.value);
 });
 
 // Retrieve and set the selected tax type on page load
-window.onload = function() {
+window.onload = function () {
     const savedTax = localStorage.getItem("selectedTaxType");
     if (savedTax) {
         document.getElementById("taxType").value = savedTax;
@@ -144,15 +170,15 @@ function getCurrencySymbol(currencyCode) {
         case 'USD':
             return '$';
         case 'EUR':
-            return '€'; 
+            return '€';
         case 'MYR':
-            return 'RM'; 
+            return 'RM';
         case 'IND':
             return '₹';
         case 'AUD':
-            return 'A$'; 
+            return 'A$';
         default:
-            return ''; 
+            return '';
     }
 }
 
@@ -167,7 +193,7 @@ function disableAllItems() {
         });
         const editButton = item.querySelector(".edit-btn");
         if (editButton) {
-            editButton.dataset.action = "edit"; 
+            editButton.dataset.action = "edit";
             editButton.innerHTML = `<i class="fas fa-edit"></i>`;
         }
     });
@@ -239,7 +265,7 @@ function calculateLineTotal(quantityInput, priceInput, taxCheckbox, taxInput, li
 
     lineTotalInput.value = lineTotal.toFixed(2); // Update line total display
 
-    
+
 }
 
 // Function to toggle between save and edit states
@@ -273,13 +299,13 @@ function toggleTaxField(checkbox) {
     const taxField = checkbox.closest(".item-fields").querySelector(".tax-field");
 
     if (checkbox.checked) {
-        taxField.style.display = "inline-block"; 
-        taxField.disabled = false; 
-        taxField.focus(); 
+        taxField.style.display = "inline-block";
+        taxField.disabled = false;
+        taxField.focus();
     } else {
-        taxField.style.display = "none"; 
-        taxField.value = ""; 
-        taxField.disabled = true; 
+        taxField.style.display = "none";
+        taxField.value = "";
+        taxField.disabled = true;
     }
 }
 
@@ -297,12 +323,15 @@ function showCustomCurrencyField(selectElement) {
 }
 
 // Save the selected currency to localStorage when changed
-document.getElementById("currencyCode").addEventListener("change", function() {
+document.getElementById("currencyCode").addEventListener("change", function () {
     localStorage.setItem("selectedCurrency", this.value);
 });
 
 // Retrieve and set the selected currency on page load
-window.onload = function() {
+window.onload = function () {
+
+    // Set the auto-generated invoice number
+    document.getElementById("invoiceNumber").value = generateInvoiceNumber();
     const currencySelect = document.getElementById("currencyCode");
     const savedCurrency = localStorage.getItem("selectedCurrency");
 
@@ -310,13 +339,13 @@ window.onload = function() {
     if (savedCurrency) {
         currencySelect.value = ""; // This keeps it as "Select Currency"
         showCustomCurrencyField(currencySelect);
-        calculateTotals(); 
-        currencySelect.value = ""; 
-        showCustomCurrencyField(currencySelect); 
-}
+        calculateTotals();
+        currencySelect.value = "";
+        showCustomCurrencyField(currencySelect);
+    }
 };
 // Form submission handling
-document.getElementById('invoiceForm').addEventListener('submit', function(event) {
+document.getElementById('invoiceForm').addEventListener('submit', function (event) {
     event.preventDefault(); // Prevent the default form submission
 
     const items = [];
@@ -327,10 +356,10 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
         const priceAmount = parseFloat(item.querySelector('input[name="price"]').value);
         const isTaxable = item.querySelector('input[name="isTaxable"]').checked;
         const taxAmount = isTaxable ? parseFloat(item.querySelector('input[name="taxAmount"]').value) || 0 : 0;
-        
 
-         // Get the tax type code from the dropdown or input
-         const taxTypeCode = isTaxable ? document.getElementById("taxType").value : "No Tax"; // Define taxTypeCode here
+
+        // Get the tax type code from the dropdown or input
+        const taxTypeCode = isTaxable ? document.getElementById("taxType").value : "No Tax"; // Define taxTypeCode here
 
 
         // Calculate line total amount
@@ -345,7 +374,7 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
                 price: {
                     priceAmount,
                     baseQuantity: 1,
-                    currencyCode: "USD" 
+                    currencyCode: "USD"
                 },
                 isTaxable,
                 tax: {
@@ -366,8 +395,8 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
         alert("Please add at least one item to the invoice.");
         return;
     }
-      // Updated address structure for supplier and buyer
-      const supplierAddress = {
+    // Updated address structure for supplier and buyer
+    const supplierAddress = {
         streetName: document.getElementById("supplierStreet").value,
         cityName: document.getElementById("supplierCity").value,
         postalZone: document.getElementById("supplierPostal").value,
@@ -410,105 +439,78 @@ document.getElementById('invoiceForm').addEventListener('submit', function(event
         },
         body: JSON.stringify(formData),
     })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(errData => {
-                throw new Error(`HTTP error! status: ${response.status}, message: ${errData.message}`);
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(errData => {
+                    throw new Error(`HTTP error! status: ${response.status}, message: ${errData.message}`);
+                });
+            }
+            return response.json();
+        })
+
+        .then(data => {
+            console.log("Response Data:", data); // Log the entire response data
+
+            // Check if `data` has the expected structure and properties
+            if (data && data.invoice && data.invoice.invoiceNumber && data.invoice._id) {
+                console.log('Invoice Created:', data);
+                console.log('Invoice ID:', data.invoice._id);
+
+                // Redirect to the success page with query parameters
+                window.location.href = `/invoice-success?invoiceNumber=${data.invoice.invoiceNumber}&invoiceId=${data.invoice._id}`;
+            } else {
+                // Log an error if the expected properties are not found
+                console.error("Invoice number or ID not found in response:", data);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error.message);
+            alert(error.message);
+        });
+
+    async function updateInvoice(invoiceId, updatedData) {
+        try {
+            const response = await fetch(`/api/invoice/${invoiceId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(updatedData),  // Send the updated invoice data as JSON
             });
-        }
-        return response.json();
-    })
-   
-    .then(data => {
-        console.log("Response Data:", data); // Log the entire response data
-    
-        // Check if `data` has the expected structure and properties
-        if (data && data.invoice && data.invoice.invoiceNumber && data.invoice._id) {
-            console.log('Invoice Created:', data);
-            console.log('Invoice ID:', data.invoice._id);
-    
-            // Redirect to the success page with query parameters
-            window.location.href = `/invoice-success?invoiceNumber=${data.invoice.invoiceNumber}&invoiceId=${data.invoice._id}`;
-        } else {
-            // Log an error if the expected properties are not found
-            console.error("Invoice number or ID not found in response:", data);
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error.message); 
-        alert(error.message);
-    });
-    
 
-// function updateInvoice(invoiceId, updatedData) {
-//     fetch(`http://localhost:3000/api/invoice/${invoiceId}`, {
-//         method: 'PUT',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(updatedData) // Pass the updated fields in the request body
-//     })
-//     .then(response => {
-//         if (!response.ok) {
-//             return response.json().then(errorData => {
-//                 throw new Error(`Error: ${errorData.message}`);
-//             });
-//         }
-//         return response.json();
-//     })
-//     .then(data => {
-//         console.log("Invoice updated successfully:", data);
-//         // Handle success, e.g., updating the UI
-//     })
-//     .catch(error => {
-//         console.error("Error updating invoice:", error);
-//         // Handle error, e.g., showing an error message to the user
-//     });
-// }
+            if (!response.ok) {
+                throw new Error('Failed to update the invoice');
+            }
 
-async function updateInvoice(invoiceId, updatedData) {
-    try {
-      const response = await fetch(`/api/invoice/${invoiceId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedData),  // Send the updated invoice data as JSON
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to update the invoice');
-      }
-  
-      const updatedInvoice = await response.json();
-      console.log('Updated invoice:', updatedInvoice);
-      return updatedInvoice;
-    } catch (error) {
-      console.error('Error:', error);
+            const updatedInvoice = await response.json();
+            console.log('Updated invoice:', updatedInvoice);
+            return updatedInvoice;
+        } catch (error) {
+            console.error('Error:', error);
+        }
     }
-  }
-cd  
-function deleteInvoice(invoiceId) {
-    fetch(`http://localhost:3000/api/invoice/delete/${invoiceId}`, {
-        method: 'DELETE', // Make sure this is set to 'DELETE'
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(errorData => {
-                throw new Error(`Error: ${errorData.message}`);
+
+    function deleteInvoice(invoiceId) {
+        fetch(`http://localhost:3000/api/invoice/delete/${invoiceId}`, {
+            method: 'DELETE', // Make sure this is set to 'DELETE'
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(errorData => {
+                        throw new Error(`Error: ${errorData.message}`);
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Invoice deleted successfully:", data);
+            })
+            .catch(error => {
+                console.error("Error deleting invoice:", error);
             });
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log("Invoice deleted successfully:", data);
-    })
-    .catch(error => {
-        console.error("Error deleting invoice:", error);
-    });
-}
+    }
 
 });

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rsm:CrossIndustryInvoice xmlns="[object Object]">
+  <rsm:ExchangedDocumentContext>
+    <ram:GuidelineSpecifiedDocumentContextParameter>
+      <ram:ID>urn:cen.eu:en16931:2017#conformant#urn:factur-x.eu:1p0:extended</ram:ID>
+    </ram:GuidelineSpecifiedDocumentContextParameter>
+  </rsm:ExchangedDocumentContext>
+  <rsm:ExchangedDocument>
+    <ram:ID>INV-2024-11-0007</ram:ID>
+    <ram:TypeCode>380</ram:TypeCode>
+    <ram:IssueDateTime>
+      <udt:DateTimeString format="102">Mon Nov 11 2024 11:00:00 GMT+1100 (Australian Eastern Daylight Time)</udt:DateTimeString>
+    </ram:IssueDateTime>
+    <ram:IncludedNote>
+      <ram:Content>AFTER PAYMENT CLICK HERE: https://www.google.com/</ram:Content>
+      <ram:SubjectCode>AAI</ram:SubjectCode>
+    </ram:IncludedNote>
+    <ram:IncludedNote>
+      <ram:Content>EBUSINESS SOFTWARE FRANCESOCIETE ANONYMECAPITAL SOCIAL 914694,10 EURB 412193567</ram:Content>
+      <ram:SubjectCode>REG</ram:SubjectCode>
+    </ram:IncludedNote>
+  </rsm:ExchangedDocument>
+  <rsm:SupplyChainTradeTransaction>
+    <ram:BuyerParty>
+      <ram:Name>Josh</ram:Name>
+      <ram:PostalTradeAddress>
+        <ram:LineOne>4-6 Conquest Way, Hallam VIC Australia</ram:LineOne>
+        <ram:CityName>Melbourne</ram:CityName>
+        <ram:PostcodeCode>3803</ram:PostcodeCode>
+        <ram:CountryID>India</ram:CountryID>
+      </ram:PostalTradeAddress>
+    </ram:BuyerParty>
+    <ram:SellerParty>
+      <ram:Name>goodlyf</ram:Name>
+      <ram:PostalTradeAddress>
+        <ram:LineOne>14 Old Agraharam near Market</ram:LineOne>
+        <ram:CityName>OOty</ram:CityName>
+        <ram:PostcodeCode>643001</ram:PostcodeCode>
+        <ram:CountryID>India</ram:CountryID>
+      </ram:PostalTradeAddress>
+    </ram:SellerParty>
+  </rsm:SupplyChainTradeTransaction>
+  <ram:IncludedSupplyChainTradeLineItem>
+    <ram:AssociatedDocumentLineDocument>
+      <ram:LineID>1</ram:LineID>
+    </ram:AssociatedDocumentLineDocument>
+    <ram:SpecifiedTradeProduct>
+      <ram:GlobalID schemeID="IN">1</ram:GlobalID>
+      <ram:SellerAssignedID>1</ram:SellerAssignedID>
+      <ram:BuyerAssignedID>1</ram:BuyerAssignedID>
+      <ram:Name>IPHONE</ram:Name>
+    </ram:SpecifiedTradeProduct>
+    <ram:SpecifiedLineTradeAgreement>
+      <ram:NetPriceProductTradePrice>
+        <ram:ChargeAmount>100</ram:ChargeAmount>
+        <ram:BasisQuantity unitCode="C62">1</ram:BasisQuantity>
+      </ram:NetPriceProductTradePrice>
+    </ram:SpecifiedLineTradeAgreement>
+    <ram:SpecifiedLineTradeDelivery>
+      <ram:BilledQuantity unitCode="C62">1</ram:BilledQuantity>
+    </ram:SpecifiedLineTradeDelivery>
+    <ram:SpecifiedLineTradeSettlement>
+      <ram:ApplicableTradeTax>
+        <ram:TypeCode>No Tax</ram:TypeCode>
+        <ram:TaxAmount>0</ram:TaxAmount>
+        <ram:RateApplicablePercent>0</ram:RateApplicablePercent>
+      </ram:ApplicableTradeTax>
+      <ram:SpecifiedTradeSettlementLineMonetarySummation>
+        <ram:LineTotalAmount>100</ram:LineTotalAmount>
+      </ram:SpecifiedTradeSettlementLineMonetarySummation>
+    </ram:SpecifiedLineTradeSettlement>
+  </ram:IncludedSupplyChainTradeLineItem>
+  <ram:ApplicableHeaderTradeSettlement>
+    <ram:InvoiceCurrencyCode>USD</ram:InvoiceCurrencyCode>
+    <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+      <ram:LineTotalAmount>100</ram:LineTotalAmount>
+      <ram:TaxTotalAmount>0</ram:TaxTotalAmount>
+      <ram:GrandTotalAmount>100</ram:GrandTotalAmount>
+      <ram:DuePayableAmount>100</ram:DuePayableAmount>
+    </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
+  </ram:ApplicableHeaderTradeSettlement>
+</rsm:CrossIndustryInvoice>

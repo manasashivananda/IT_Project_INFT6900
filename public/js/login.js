@@ -38,4 +38,3 @@ document
     }
   });
 
-// ss@gmail.com

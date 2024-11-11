@@ -1,135 +1,133 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
-  
-    <link rel="stylesheet" href="/css/dashboard.css" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <!-- Font Awesome for Icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-    />
-  </head>
-  <body>
-    <!-- Header Section -->
-    <header class="main-header">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard</title>
+
+  <link rel="stylesheet" href="/css/dashboard.css" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Font Awesome for Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+</head>
+
+<body>
+  <!-- Header Section -->
+  <header class="main-header">
     <div class="user-info">
-        <h1>Welcome, {{user.name}}</h1>
-        <p><i class="fas fa-building icon-spacing"></i> Business Name: {{user.businessName}}</p>
-        <p><i class="fas fa-envelope icon-spacing"></i> Email: {{user.email}}</p>
-        <p><i class="fas fa-phone icon-spacing"></i> Contact Phone: {{user.contactPhone}}</p>
+      <h1>Welcome, {{user.name}}</h1>
+      <p><i class="fas fa-building icon-spacing"></i> Business Name: {{user.businessName}}</p>
+      <p><i class="fas fa-envelope icon-spacing"></i> Email: {{user.email}}</p>
+      <p><i class="fas fa-phone icon-spacing"></i> Contact Phone: {{user.contactPhone}}</p>
     </div>
     <div class="quick-access">
-        <button id="homeBtn" onclick="location.href='/'">
-            <i class="fas fa-home"></i> Home
-        </button>
-        <button id="generateReportBtn">
-            <i class="fas fa-file-alt"></i> Generate Report
-        </button>
-        <button id="accountBtn">
-            <i class="fas fa-user-circle"></i> Account
-        </button>
+      <button id="homeBtn" onclick="location.href='/'">
+        <i class="fas fa-home"></i> Home
+      </button>
+      <button id="generateReportBtn">
+        <i class="fas fa-file-alt"></i> Generate Report
+      </button>
+      <button id="accountBtn">
+        <i class="fas fa-user-circle"></i> Account
+      </button>
     </div>
-</header>
+  </header>
 
 
-    <!-- Dashboard Content -->
-    <div class="dashboard-columns">
-      <!-- Left Column (Recent Activity) -->
-      <div class="recent-activity">
-        <h2><i class="fas fa-clock"></i> Recent Activities</h2>
-        <div id="recent-activities">
-          {{#if user.activities}}
-            <ul>
-              {{#each user.activities}}
-                <li>{{this}}</li>
-              {{/each}}
-            </ul>
-          {{else}}
-            <p>No recent activities available.</p>
-          {{/if}}
-        </div>
-      </div>
-
-      <!-- Center Column (Statistics) -->
-<div class="statistics">
-  <h2><i class="fas fa-chart-bar"></i> Statistics</h2>
-<ul>
-  <li><i class="fas fa-file-invoice"></i> Total Invoices Created: <span id="totalInvoicesCreated">{{statistics.totalInvoicesCreated}}</span></li>
-  <li><i class="fas fa-calendar-alt"></i> Invoices Due This Month: <span id="invoicesDueThisMonth">{{statistics.invoicesDueThisMonth}}</span></li>
-  <li><i class="fas fa-coins"></i> Average Invoice Amount: <span id="averageInvoiceAmount">{{statistics.averageInvoiceAmount}} MYR</span></li>
-  <li><i class="fas fa-users"></i> Total Clients: <span id="totalClients">{{statistics.totalClients}}</span></li>
-</ul>
-
-
-</div>
-      <!-- Right Column (Actions) -->
-      <div class="actions">
-        <h2><i class="fas fa-tasks"></i> Actions</h2>
-        <div class="action-buttons">
-          <button id="refreshStats">
-            <i class="fas fa-sync-alt"></i> Refresh Statistics
-          </button>
-          <button id="createInvoice" onclick="location.href='/invoice'">
-            <i class="fas fa-file-invoice"></i> Create Invoice
-          </button>
-        </div>
+  <!-- Dashboard Content -->
+  <div class="dashboard-columns">
+    <!-- Left Column (Recent Activity) -->
+    <div class="recent-activity">
+      <h2><i class="fas fa-clock"></i> Recent Activities</h2>
+      <div id="recent-activities">
+        {{#if user.activities}}
+        <ul>
+          {{#each user.activities}}
+          <li>{{this}}</li>
+          {{/each}}
+        </ul>
+        {{else}}
+        <p>No recent activities available.</p>
+        {{/if}}
       </div>
     </div>
 
+    <!-- Center Column (Statistics) -->
+    <div class="statistics">
+      <h2><i class="fas fa-chart-bar"></i> Statistics</h2>
+      <ul>
+        <li><i class="fas fa-file-invoice"></i> Total Invoices Created: <span
+            id="totalInvoicesCreated">{{statistics.totalInvoicesCreated}}</span></li>
+        <li><i class="fas fa-calendar-alt"></i> Invoices Due This Month: <span
+            id="invoicesDueThisMonth">{{statistics.invoicesDueThisMonth}}</span></li>
+        <li><i class="fas fa-coins"></i> Average Invoice Amount: <span
+            id="averageInvoiceAmount">{{statistics.averageInvoiceAmount}} MYR</span></li>
+        <li><i class="fas fa-users"></i> Total Clients: <span id="totalClients">{{statistics.totalClients}}</span></li>
+      </ul>
 
-     <!-- New Download Invoice Section -->
-    <div class="download-invoice">
-      <h2><i class="fas fa-download"></i> Download Invoice</h2>
-      <div class="download-controls">
-        <select id="invoiceSelect">
-          <option value="">Select Invoice to Download</option>
-        </select>
-        <button id="downloadInvoiceButton" class="download-btn">
-          <i class="fas fa-file-download"></i> Download Selected Invoice
+
+    </div>
+    <!-- Right Column (Actions) -->
+    <div class="actions">
+      <h2><i class="fas fa-tasks"></i> Actions</h2>
+      <div class="action-buttons">
+        <button id="refreshStats">
+          <i class="fas fa-sync-alt"></i> Refresh Statistics
         </button>
-       <button id="deleteInvoiceButton" class="delete-btn">
-  <i class="fas fa-trash-alt"></i> Delete Selected Invoice
-</button>
-
- {{!-- <button id="editInvoiceButton" class="edit-btn">
-  <i class="fas fa-trash-alt"></i> Edit Selected Invoice
- </button> --}}
-
-
+        <button id="createInvoice" onclick="location.href='/invoice'">
+          <i class="fas fa-file-invoice"></i> Create Invoice
+        </button>
       </div>
-    </div>
-
-    <!-- Placeholder for charts -->
-
-<div class="performance-analytics">
-  <h2><i class="fas fa-chart-line"></i> Performance Analytics</h2>
-  
-  <div class="charts-container">
-    <!-- Monthly Invoices Created Chart -->
-    <div class="chart-item">
-      <canvas id="monthlyInvoicesChart"></canvas>
-      <h3><i class="fas fa-file-invoice"></i> Monthly Invoices Created</h3>
-    </div>
-
-    <!-- Monthly Revenue Trends Chart -->
-    <div class="chart-item">
-      <canvas id="revenueTrendChart"></canvas>
-      <h3><i class="fas fa-dollar-sign"></i> Monthly Revenue Trends</h3>
     </div>
   </div>
-</div>
 
-    <script>
-    document.getElementById('refreshStats').addEventListener('click', function() {
-        alert('Statistics refreshed!');
+
+  <!-- New Download Invoice Section -->
+  <div class="download-invoice">
+    <h2><i class="fas fa-download"></i> Download Invoice</h2>
+    <div class="download-controls">
+      <select id="invoiceSelect">
+        <option value="">Select Invoice to Download</option>
+      </select>
+      <button id="downloadInvoiceButton" class="download-btn">
+        <i class="fas fa-file-download"></i> Download Selected Invoice
+      </button>
+      <button id="deleteInvoiceButton" class="delete-btn">
+        <i class="fas fa-trash-alt"></i> Delete Selected Invoice
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Placeholder for charts -->
+
+  <div class="performance-analytics">
+    <h2><i class="fas fa-chart-line"></i> Performance Analytics</h2>
+
+    <div class="charts-container">
+      <!-- Monthly Invoices Created Chart -->
+      <div class="chart-item">
+        <canvas id="monthlyInvoicesChart"></canvas>
+        <h3><i class="fas fa-file-invoice"></i> Monthly Invoices Created</h3>
+      </div>
+
+      <!-- Monthly Revenue Trends Chart -->
+      <div class="chart-item">
+        <canvas id="revenueTrendChart"></canvas>
+        <h3><i class="fas fa-dollar-sign"></i> Monthly Revenue Trends</h3>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('refreshStats').addEventListener('click', function () {
+      alert('Statistics refreshed!');
     });
-</script>
-       <script src="/js/dashboard.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </script>
+  <script src="/js/dashboard.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  </body>
+</body>
+
 </html>
