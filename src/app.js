@@ -1,3 +1,4 @@
+require('dotenv').config(); 
 const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
@@ -9,7 +10,6 @@ const Registration = require("./models/registration");
 const fs = require('fs');
 const { create } = require('xmlbuilder2');
 const session = require("express-session"); // Import express-session
-require("dotenv").config();
 const Invoice = require('./models/invoice');
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 const generateUBLXML = require('./util/ublInvoiceGenerator');
@@ -26,20 +26,25 @@ return moment(date).format('YYYY-MM-DD'); // Format the date to 'YYYY-MM-DD'
 });
 
 
-// MongoDB connection
-mongoose.connect('mongodb://127.0.0.1:27017/invoices', {
+// Get the MongoDB URI from the environment variable
+const mongoURI = 'mongodb+srv://manasa:b9ab7uBg4DxDXmUj@invoice-service-cluster.w3bzv.mongodb.net/invoices?retryWrites=true&w=majority';
+
+console.log("Mongo URI:", mongoURI);  // This should print the Mongo URI directly
+
+mongoose.connect(mongoURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     serverSelectionTimeoutMS: 5000
-});
-
-mongoose.connection.on('connected', () => {
-    console.log('Connected to MongoDB successfully!');
-});
-
-mongoose.connection.on('error', (err) => {
+})
+.then(() => {
+    console.log("MongoDB connected successfully!");
+})
+.catch((err) => {
     console.error(`Failed to connect to MongoDB: ${err.message}`);
 });
+
+
+
 
  // Set paths for views, partials, and static files
  const static_path = path.join(__dirname, '../public');
