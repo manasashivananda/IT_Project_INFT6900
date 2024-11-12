@@ -74,12 +74,12 @@ hbs.registerPartials(partials_path);
 
 // **Set up session middleware here, before route definitions**
 app.use(session({
-  secret: process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET,  // Use your session secret
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: false,  // For local development (HTTP)
-    httpOnly: true, // Recommended for security
+    secure: process.env.NODE_ENV === 'production',  // True in production, false in development
+    httpOnly: true, // Keep this for security
   }
 }));
 
