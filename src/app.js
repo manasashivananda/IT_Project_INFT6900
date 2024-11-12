@@ -78,10 +78,12 @@ app.use(session({
   resave: false,
   saveUninitialized: true,
   cookie: {
-    secure: process.env.NODE_ENV === 'production' && req.secure,  // Secure cookies only if HTTPS is used in production
-    httpOnly: true, // Keep this for security
+    // Set cookies to be secure if in production and HTTPS is enabled
+    secure: process.env.NODE_ENV === 'production' && process.env.HTTPS === 'true',
+    httpOnly: true,  // Keep this for security
   }
 }));
+
 
 
 // Middleware setup
