@@ -6,7 +6,7 @@
     </ram:GuidelineSpecifiedDocumentContextParameter>
   </rsm:ExchangedDocumentContext>
   <rsm:ExchangedDocument>
-    <ram:ID>INV-2024-11-0001</ram:ID>
+    <ram:ID>INV-2024-11-0002</ram:ID>
     <ram:TypeCode>380</ram:TypeCode>
     <ram:IssueDateTime>
       <udt:DateTimeString format="102">Tue Nov 12 2024 11:00:00 GMT+1100 (Australian Eastern Daylight Time)</udt:DateTimeString>
@@ -22,7 +22,7 @@
   </rsm:ExchangedDocument>
   <rsm:SupplyChainTradeTransaction>
     <ram:BuyerParty>
-      <ram:Name>Mansi</ram:Name>
+      <ram:Name>mansi</ram:Name>
       <ram:PostalTradeAddress>
         <ram:LineOne>16 PEGASUS CT</ram:LineOne>
         <ram:CityName>Tarneit</ram:CityName>
@@ -53,11 +53,11 @@
     <ram:SpecifiedLineTradeAgreement>
       <ram:NetPriceProductTradePrice>
         <ram:ChargeAmount>200</ram:ChargeAmount>
-        <ram:BasisQuantity unitCode="C62">1</ram:BasisQuantity>
+        <ram:BasisQuantity unitCode="C62">2</ram:BasisQuantity>
       </ram:NetPriceProductTradePrice>
     </ram:SpecifiedLineTradeAgreement>
     <ram:SpecifiedLineTradeDelivery>
-      <ram:BilledQuantity unitCode="C62">1</ram:BilledQuantity>
+      <ram:BilledQuantity unitCode="C62">2</ram:BilledQuantity>
     </ram:SpecifiedLineTradeDelivery>
     <ram:SpecifiedLineTradeSettlement>
       <ram:ApplicableTradeTax>
@@ -66,17 +66,17 @@
         <ram:RateApplicablePercent>0</ram:RateApplicablePercent>
       </ram:ApplicableTradeTax>
       <ram:SpecifiedTradeSettlementLineMonetarySummation>
-        <ram:LineTotalAmount>200</ram:LineTotalAmount>
+        <ram:LineTotalAmount>400</ram:LineTotalAmount>
       </ram:SpecifiedTradeSettlementLineMonetarySummation>
     </ram:SpecifiedLineTradeSettlement>
   </ram:IncludedSupplyChainTradeLineItem>
   <ram:ApplicableHeaderTradeSettlement>
-    <ram:InvoiceCurrencyCode>USD</ram:InvoiceCurrencyCode>
+    <ram:InvoiceCurrencyCode>EUR</ram:InvoiceCurrencyCode>
     <ram:SpecifiedTradeSettlementHeaderMonetarySummation>
-      <ram:LineTotalAmount>200</ram:LineTotalAmount>
+      <ram:LineTotalAmount>400</ram:LineTotalAmount>
       <ram:TaxTotalAmount>0</ram:TaxTotalAmount>
-      <ram:GrandTotalAmount>200</ram:GrandTotalAmount>
-      <ram:DuePayableAmount>200</ram:DuePayableAmount>
+      <ram:GrandTotalAmount>400</ram:GrandTotalAmount>
+      <ram:DuePayableAmount>400</ram:DuePayableAmount>
     </ram:SpecifiedTradeSettlementHeaderMonetarySummation>
   </ram:ApplicableHeaderTradeSettlement>
 </rsm:CrossIndustryInvoice>

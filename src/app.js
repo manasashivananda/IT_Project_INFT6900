@@ -17,6 +17,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 app.use(express.static('public'));
 const js2xmlparser = require("js2xmlparser");
+app.use(express.json()); // Make sure this is added before your routes
+
 
 const moment = require('moment'); // Add moment.js for date formatting
 
@@ -25,16 +27,24 @@ hbs.registerHelper('formatDate', function(date) {
 return moment(date).format('YYYY-MM-DD'); // Format the date to 'YYYY-MM-DD'
 });
 
+// Load environment variables
+require('dotenv').config();
 
-// Get the MongoDB URI from the environment variable
-const mongoURI = 'mongodb+srv://manasa:b9ab7uBg4DxDXmUj@invoice-service-cluster.w3bzv.mongodb.net/invoices?retryWrites=true&w=majority';
+// Use the URI to connect to MongoDB
+const mongoURI = process.env.MONGODB_URI;
+console.log('Mongo URI:', process.env.MONGODB_URI);
+console.log('Current Environment:', process.env.NODE_ENV);
 
-console.log("Mongo URI:", mongoURI);  // This should print the Mongo URI directly
 
-mongoose.connect(mongoURI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000
+if (!mongoURI) {
+    console.error("MONGODB_URI is not defined!");
+    process.exit(1);  // Exit the application if the URI is not defined
+}
+
+
+// Connect to MongoDB
+mongoose.connect(mongoURI, { 
+    serverSelectionTimeoutMS: 10000
 })
 .then(() => {
     console.log("MongoDB connected successfully!");
@@ -43,8 +53,14 @@ mongoose.connect(mongoURI, {
     console.error(`Failed to connect to MongoDB: ${err.message}`);
 });
 
-
-
+// Disconnect and reconnect to the correct database
+mongoose.disconnect()
+  .then(() => {
+    mongoose.connect(mongoURI, {  })
+      .then(() => console.log('Connected to the invoices database!'))
+      .catch(err => console.log('Error connecting to MongoDB:', err));
+  })
+  .catch(err => console.log('Error disconnecting from MongoDB:', err));
 
  // Set paths for views, partials, and static files
  const static_path = path.join(__dirname, '../public');
@@ -57,14 +73,16 @@ app.set('views', views_path);
 hbs.registerPartials(partials_path);
 
 // **Set up session middleware here, before route definitions**
-app.use(
-session({
-  secret: "f1e002393e1f9a4cea6e9274e0c8ba63ced2782485e883716eca733de9bb1e3f03045caa076a0ee22c1ae53c8d349c53d7a25b4c8feac0b388ff81b8cff0f82f", // Replace with your generated secret key
+app.use(session({
+  secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: false,
-  cookie: { secure: false }, // Set secure to true if using HTTPS
-})
-);
+  saveUninitialized: true,
+  cookie: {
+    secure: false,  // For local development (HTTP)
+    httpOnly: true, // Recommended for security
+  }
+}));
+
 
 // Middleware setup
 app.use(cors({
@@ -130,36 +148,50 @@ app.post("/register", async (req, res) => {
   }
 });
 
-// Route to handle login
+// Login route
 app.post("/login", async (req, res) => {
+  console.log("Request body:", req.body);  // Log the incoming request body
+
   const { contactEmail, password } = req.body;
 
-  // Find user by email
+  if (!contactEmail || !password) {
+    return res.status(400).json({ message: "Both email and password are required." });
+  }
+
+  // Find the user by email
   const user = await Registration.findOne({ contactEmail: contactEmail });
+
+  // Log the user to see if we find the correct record
+  console.log("Found user:", user);
+
   if (!user) {
     return res.status(400).json({ message: "Invalid email or password." });
   }
 
-  // Check password against the hashed password
+  // Check password against the stored hash
   const match = await bcrypt.compare(password, user.password);
+  console.log("Password match:", match);  // Log if the password matches
+
   if (!match) {
     return res.status(400).json({ message: "Invalid email or password." });
   }
 
-  // Set session variables for the logged-in user, including userId
+  // Set session variables
   req.session.user = {
-    id: user._id,  // Store the userId in the session
+    id: user._id,
     name: user.contactName,
     email: user.contactEmail,
     businessName: user.businessName,
     contactPhone: user.contactPhone,
   };
 
-  console.log("Session after login:", req.session); // Log session data
+  console.log("Session after login:", req.session);  // Log session data
 
-  // Send success response back to the frontend
+  // Send success response
   res.json({ message: "Login successful!" });
 });
+
+
 
 // Middleware to check if user is logged in
 function isAuthenticated(req, res, next) {

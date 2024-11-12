@@ -13,6 +13,10 @@ document
       return;
     }
 
+    // Debugging: Log the values before sending
+    console.log("Contact Email:", contactEmail);
+    console.log("Password:", password);
+
     // Submit the form data to the backend
     try {
       const response = await fetch("/login", {
@@ -27,9 +31,9 @@ document
       const result = await response.json();
 
       if (response.ok) {
-        //redirect to another page
         window.location.href = "/dashboard";
       } else {
+        console.error("Error:", result);
         document.getElementById("errorMessage").style.display = "block";
       }
     } catch (error) {
@@ -37,4 +41,3 @@ document
       alert("Login failed. Please try again.");
     }
   });
-
